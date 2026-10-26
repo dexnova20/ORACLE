@@ -1,0 +1,5 @@
+[project]
+name = "proj-09-misleading"
+version = "0.1.0"
+description = "Clean healthy project with historical misleading comment"
+dependencies = []

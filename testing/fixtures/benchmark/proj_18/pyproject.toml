@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-18"
+version = "0.1.0"
+description = "Controlled fixture testing duplicate observations across multiple components."
+dependencies = []

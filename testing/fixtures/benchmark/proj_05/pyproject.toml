@@ -1,0 +1,5 @@
+[project]
+name = "proj-05-missing-env"
+version = "0.1.0"
+description = "Project requiring mandatory environment variable"
+dependencies = []

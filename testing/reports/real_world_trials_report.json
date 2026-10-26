@@ -1,0 +1,226 @@
+{
+  "generated_at": "2026-10-26T20:19:20.797249+00:00",
+  "total_trials": 8,
+  "passed_trials": 8,
+  "overall_accuracy_pct": 100.0,
+  "healthy_control_trials": 5,
+  "healthy_control_clean_pct": 100.0,
+  "defective_scenario_trials": 3,
+  "defective_scenario_accuracy_pct": 100.0,
+  "results": [
+    {
+      "trial_id": "TRIAL-001",
+      "target_name": "FastAPI Microservice",
+      "ecosystem": "python",
+      "provenance": "Synthetic production-grade FastAPI service layout with APIRouter and pyproject.toml",
+      "license": "Apache-2.0",
+      "is_healthy_control": true,
+      "expected_findings": [
+        "Healthy service",
+        "0 fault hypotheses"
+      ],
+      "actual_hypotheses_count": 0,
+      "top1_hypothesis_category": null,
+      "top1_hypothesis_component": null,
+      "top1_hypothesis_confidence": null,
+      "top1_hypothesis_status": null,
+      "all_hypothesis_categories": [],
+      "probes_executed_count": 0,
+      "executed_probe_summaries": [],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 39.73680001217872
+    },
+    {
+      "trial_id": "TRIAL-002",
+      "target_name": "Next.js / TypeScript App",
+      "ecosystem": "typescript",
+      "provenance": "Synthetic Next.js frontend utility layout with package.json and React dependencies",
+      "license": "MIT",
+      "is_healthy_control": true,
+      "expected_findings": [
+        "Healthy frontend utility",
+        "0 fault hypotheses"
+      ],
+      "actual_hypotheses_count": 0,
+      "top1_hypothesis_category": null,
+      "top1_hypothesis_component": null,
+      "top1_hypothesis_confidence": null,
+      "top1_hypothesis_status": null,
+      "all_hypothesis_categories": [],
+      "probes_executed_count": 0,
+      "executed_probe_summaries": [],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 2326.9010999938473
+    },
+    {
+      "trial_id": "TRIAL-003",
+      "target_name": "Spring Boot Java Maven Service",
+      "ecosystem": "java",
+      "provenance": "Synthetic Maven enterprise service with pom.xml, Spring Web, and Jackson",
+      "license": "Apache-2.0",
+      "is_healthy_control": true,
+      "expected_findings": [
+        "Healthy Java service",
+        "0 fault hypotheses"
+      ],
+      "actual_hypotheses_count": 0,
+      "top1_hypothesis_category": null,
+      "top1_hypothesis_component": null,
+      "top1_hypothesis_confidence": null,
+      "top1_hypothesis_status": null,
+      "all_hypothesis_categories": [],
+      "probes_executed_count": 0,
+      "executed_probe_summaries": [],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 1908.404400019208
+    },
+    {
+      "trial_id": "TRIAL-004",
+      "target_name": "Mixed Polyglot Fullstack App",
+      "ecosystem": "polyglot (python + typescript)",
+      "provenance": "Synthetic fullstack project containing Python Flask backend and TypeScript frontend",
+      "license": "MIT",
+      "is_healthy_control": true,
+      "expected_findings": [
+        "Multi-ecosystem detection",
+        "0 fault hypotheses"
+      ],
+      "actual_hypotheses_count": 0,
+      "top1_hypothesis_category": null,
+      "top1_hypothesis_component": null,
+      "top1_hypothesis_confidence": null,
+      "top1_hypothesis_status": null,
+      "all_hypothesis_categories": [],
+      "probes_executed_count": 0,
+      "executed_probe_summaries": [],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 2776.4373999962118
+    },
+    {
+      "trial_id": "TRIAL-005",
+      "target_name": "Multi-Module Python Utility Library",
+      "ecosystem": "python",
+      "provenance": "Synthetic clean Python utility library with relative imports and pyproject.toml",
+      "license": "MIT",
+      "is_healthy_control": true,
+      "expected_findings": [
+        "Zero false positive hypotheses"
+      ],
+      "actual_hypotheses_count": 0,
+      "top1_hypothesis_category": null,
+      "top1_hypothesis_component": null,
+      "top1_hypothesis_confidence": null,
+      "top1_hypothesis_status": null,
+      "all_hypothesis_categories": [],
+      "probes_executed_count": 0,
+      "executed_probe_summaries": [],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 15.563900000415742
+    },
+    {
+      "trial_id": "TRIAL-006",
+      "target_name": "TypeScript Syntax Defect Scenario",
+      "ecosystem": "typescript",
+      "provenance": "Synthetic TypeScript data transformation module with breaking syntax error",
+      "license": "MIT",
+      "is_healthy_control": false,
+      "expected_findings": [
+        "Syntax error identified in transform.ts",
+        "Verified via static AST validation"
+      ],
+      "actual_hypotheses_count": 2,
+      "top1_hypothesis_category": "runtime_exception",
+      "top1_hypothesis_component": "src/transform.ts",
+      "top1_hypothesis_confidence": "high",
+      "top1_hypothesis_status": "verified",
+      "all_hypothesis_categories": [
+        "runtime_exception",
+        "config_missing_or_invalid"
+      ],
+      "probes_executed_count": 1,
+      "executed_probe_summaries": [
+        "PROBE-SYNTAX-src_transform_ts: static_ast_syntax_check on file:src/transform.ts -> confirmed"
+      ],
+      "unsupported_stages": [],
+      "stopping_reason": "further_investigation_unsafe_or_unsupported",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 6169.990700000199
+    },
+    {
+      "trial_id": "TRIAL-007",
+      "target_name": "Polyglot Multi-Defect System",
+      "ecosystem": "polyglot (python + typescript)",
+      "provenance": "Synthetic polyglot system with independent Python syntax error and TS undeclared package",
+      "license": "Apache-2.0",
+      "is_healthy_control": false,
+      "expected_findings": [
+        "Separation of Python syntax fault in auth_service.py and TypeScript undeclared axios dependency into distinct hypotheses"
+      ],
+      "actual_hypotheses_count": 3,
+      "top1_hypothesis_category": "runtime_exception",
+      "top1_hypothesis_component": "auth_service.py",
+      "top1_hypothesis_confidence": "high",
+      "top1_hypothesis_status": "verified",
+      "all_hypothesis_categories": [
+        "runtime_exception",
+        "dependency_import_failure",
+        "config_missing_or_invalid"
+      ],
+      "probes_executed_count": 2,
+      "executed_probe_summaries": [
+        "PROBE-SYNTAX-auth_service_py: static_ast_syntax_check on file:auth_service.py -> confirmed",
+        "PROBE-MANIFEST-axios: static_manifest_audit on axios -> confirmed"
+      ],
+      "unsupported_stages": [],
+      "stopping_reason": "further_investigation_unsafe_or_unsupported",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 1892.0808999973815
+    },
+    {
+      "trial_id": "TRIAL-008",
+      "target_name": "Java Ambiguous Dependency Resolution",
+      "ecosystem": "java",
+      "provenance": "Synthetic Java Maven project importing undeclared third-party utility class",
+      "license": "MIT",
+      "is_healthy_control": false,
+      "expected_findings": [
+        "Undeclared dependency hypothesis with uncertainty clearly stated"
+      ],
+      "actual_hypotheses_count": 2,
+      "top1_hypothesis_category": "dependency_import_failure",
+      "top1_hypothesis_component": "src/main/java/com/example/demo/App.java",
+      "top1_hypothesis_confidence": "high",
+      "top1_hypothesis_status": "verified",
+      "all_hypothesis_categories": [
+        "dependency_import_failure",
+        "dependency_import_failure"
+      ],
+      "probes_executed_count": 1,
+      "executed_probe_summaries": [
+        "PROBE-IMPORT-src_main_java_com_example_demo_App_java: static_import_resolution_check on file:src/main/java/com/example/demo/App.java -> confirmed"
+      ],
+      "unsupported_stages": [],
+      "stopping_reason": "sufficient_evidence_verified",
+      "false_positives_detected": false,
+      "findings_matched_expectations": true,
+      "duration_ms": 1478.3695000223815
+    }
+  ]
+}

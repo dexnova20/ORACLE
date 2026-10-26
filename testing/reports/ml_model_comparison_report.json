@@ -1,0 +1,231 @@
+{
+  "benchmark_timestamp": "2026-10-26T22:39:27.525971+00:00",
+  "total_scenarios": 20,
+  "dataset_name": "ORACLE Implementation 017 Generalization Benchmark",
+  "models": {
+    "Naive Uniform Baseline": {
+      "model_name": "Naive Uniform Baseline",
+      "top_1_accuracy": 0.65,
+      "top_3_accuracy": 0.8,
+      "precision": 0.65,
+      "recall": 0.8,
+      "brier_score": 0.2296,
+      "expected_calibration_error": 0.2239,
+      "abstention_quality": 1.0,
+      "mean_latency_ms": 0.05
+    },
+    "Heuristic Baseline": {
+      "model_name": "Heuristic Baseline",
+      "top_1_accuracy": 0.8,
+      "top_3_accuracy": 0.8,
+      "precision": 0.8,
+      "recall": 0.8,
+      "brier_score": 0.3031,
+      "expected_calibration_error": 0.65,
+      "abstention_quality": 1.0,
+      "mean_latency_ms": 0.036
+    },
+    "Calibrated Logistic Regression": {
+      "model_name": "Calibrated Logistic Regression",
+      "top_1_accuracy": 0.8,
+      "top_3_accuracy": 0.8,
+      "precision": 0.8,
+      "recall": 0.8,
+      "brier_score": 0.2609,
+      "expected_calibration_error": 0.3701,
+      "abstention_quality": 1.0,
+      "mean_latency_ms": 9.046
+    },
+    "Calibrated Random Forest Ensemble": {
+      "model_name": "Calibrated Random Forest Ensemble",
+      "top_1_accuracy": 0.8,
+      "top_3_accuracy": 0.8,
+      "precision": 0.8,
+      "recall": 0.8,
+      "brier_score": 0.2477,
+      "expected_calibration_error": 0.3548,
+      "abstention_quality": 1.0,
+      "mean_latency_ms": 42.036
+    }
+  },
+  "cross_validation_5fold": {
+    "Calibrated Logistic Regression": {
+      "model_name": "Calibrated Logistic Regression",
+      "top_1_accuracy": 0.7,
+      "top_3_accuracy": 0.8,
+      "brier_score": 0.1793,
+      "expected_calibration_error": 0.1704,
+      "abstention_quality": 1.0
+    },
+    "Calibrated Random Forest Ensemble": {
+      "model_name": "Calibrated Random Forest Ensemble",
+      "top_1_accuracy": 0.8,
+      "top_3_accuracy": 0.8,
+      "brier_score": 0.16,
+      "expected_calibration_error": 0.2976,
+      "abstention_quality": 1.0
+    }
+  },
+  "scenarios": [
+    {
+      "id": "GEN-001",
+      "title": "Go HTTP Service (Clean Control)",
+      "ecosystem": "go",
+      "expected_category": null,
+      "is_healthy_control": true,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-002",
+      "title": "Go Service (Syntax Error)",
+      "ecosystem": "go",
+      "expected_category": "runtime_exception",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-003",
+      "title": "Go CLI (Undeclared External Dependency)",
+      "ecosystem": "go",
+      "expected_category": "dependency_import_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-004",
+      "title": "Go Package (Unresolved Internal Module)",
+      "ecosystem": "go",
+      "expected_category": "dependency_import_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-005",
+      "title": "Database Socket Connection Refusal",
+      "ecosystem": "python",
+      "expected_category": "database_connectivity_schema",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-006",
+      "title": "Payment Gateway (API Connect Timeout)",
+      "ecosystem": "python",
+      "expected_category": "api_communication_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-007",
+      "title": "User Registration (IO Contract Schema Mismatch)",
+      "ecosystem": "python",
+      "expected_category": "io_contract_violation",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-008",
+      "title": "Data Processing (JSON Decode Error)",
+      "ecosystem": "python",
+      "expected_category": "data_validation_transformation",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-009",
+      "title": "Authentication Service (Missing Environment Variable)",
+      "ecosystem": "python",
+      "expected_category": "config_missing_or_invalid",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-010",
+      "title": "Go Worker (Runtime Panic)",
+      "ecosystem": "go",
+      "expected_category": "runtime_exception",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-011",
+      "title": "Polyglot Monorepo (Simultaneous Python + TS Syntax Faults)",
+      "ecosystem": "polyglot",
+      "expected_category": "runtime_exception",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-012",
+      "title": "Decoy Syntax Refuted vs Actual Config Error",
+      "ecosystem": "python",
+      "expected_category": "config_missing_or_invalid",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-013",
+      "title": "Gateway Service (Competing Hypotheses with Identical Signals)",
+      "ecosystem": "python",
+      "expected_category": "api_communication_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-014",
+      "title": "Circular Import Cycle",
+      "ecosystem": "python",
+      "expected_category": "dependency_import_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-015",
+      "title": "Database Transaction Deadlock",
+      "ecosystem": "python",
+      "expected_category": "database_connectivity_schema",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-016",
+      "title": "Polyglot Clean Monorepo (Python + TS + Java + Go Clean Control)",
+      "ecosystem": "polyglot",
+      "expected_category": null,
+      "is_healthy_control": true,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-017",
+      "title": "Rust Service (Out-of-Distribution Explicit Abstention)",
+      "ecosystem": "rust",
+      "expected_category": "unknown_insufficient_evidence",
+      "is_healthy_control": false,
+      "is_abstention_case": true
+    },
+    {
+      "id": "GEN-018",
+      "title": "Configuration YAML Syntax Defect",
+      "ecosystem": "config",
+      "expected_category": "config_missing_or_invalid",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-019",
+      "title": "Degraded External Service (Rate Limit 429)",
+      "ecosystem": "python",
+      "expected_category": "api_communication_failure",
+      "is_healthy_control": false,
+      "is_abstention_case": false
+    },
+    {
+      "id": "GEN-020",
+      "title": "Modular Clean Architecture (Healthy Monorepo Control)",
+      "ecosystem": "python",
+      "expected_category": null,
+      "is_healthy_control": true,
+      "is_abstention_case": false
+    }
+  ]
+}

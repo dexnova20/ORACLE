@@ -1,0 +1,7 @@
+[project]
+name = "proj-04-ext-dep"
+version = "0.1.0"
+description = "Project with undeclared third-party dependencies"
+dependencies = [
+    "fastapi>=0.100.0",
+]

@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-15"
+version = "0.1.0"
+description = "Controlled fixture testing immunity to misleading comments and docstrings."
+dependencies = []

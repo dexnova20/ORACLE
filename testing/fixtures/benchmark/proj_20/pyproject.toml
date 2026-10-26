@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-20"
+version = "0.1.0"
+description = "Controlled fixture testing configuration references with safe defaults."
+dependencies = []

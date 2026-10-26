@@ -1,0 +1,5 @@
+[project]
+name = "proj-07-io-contract"
+version = "0.1.0"
+description = "Project with API contract payload mismatch"
+dependencies = []

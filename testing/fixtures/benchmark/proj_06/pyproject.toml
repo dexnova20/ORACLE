@@ -1,0 +1,5 @@
+[project]
+name = "proj-06-db-conn"
+version = "0.1.0"
+description = "Project connecting to offline database endpoint"
+dependencies = []

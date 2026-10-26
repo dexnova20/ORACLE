@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-11"
+version = "0.1.0"
+description = "Controlled fixture evaluating downstream component independence and blocked state."
+dependencies = []

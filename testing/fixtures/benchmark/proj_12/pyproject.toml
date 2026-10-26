@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-12"
+version = "0.1.0"
+description = "Controlled fixture evaluating multiple simultaneous independent faults."
+dependencies = []

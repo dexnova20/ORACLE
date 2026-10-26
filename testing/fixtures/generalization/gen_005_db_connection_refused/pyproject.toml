@@ -1,0 +1,4 @@
+[project]
+name = "db-app"
+version = "0.1.0"
+dependencies = ["psycopg>=3.0"]

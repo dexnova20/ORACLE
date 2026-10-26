@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-16"
+version = "0.1.0"
+description = "Controlled fixture testing upstream fault with independently faulty downstream component."
+dependencies = []

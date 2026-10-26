@@ -1,0 +1,5 @@
+[project]
+name = "proj-01-clean"
+version = "0.1.0"
+description = "Clean healthy baseline project"
+dependencies = []

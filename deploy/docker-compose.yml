@@ -1,0 +1,124 @@
+# ==============================================================================
+# ORACLE Production Deployment Compose Configuration
+#
+# Topology:
+#   - db: Hardened PostgreSQL 16 on private internal network with persistent volume
+#   - backend: FastAPI + Polyglot AST analysis engine (Python/Node/Java)
+#   - frontend: Next.js 16 standalone production container
+#
+# Security Invariants:
+#   - Strict network segregation: database is on internal-only network
+#   - Unprivileged non-root users across all application containers
+#   - Backend does NOT mount /var/run/docker.sock (host daemon isolation)
+#   - Production environment invariants enforced at startup
+# ==============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: oracle-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-oracle_db}
+      POSTGRES_USER: ${POSTGRES_USER:-oracle_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oracle_production_secure_pass_2026}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - oracle_pgdata:/var/lib/postgresql/data
+    networks:
+      - oracle_internal
+    ports:
+      # Bound to localhost only to prevent public network exposure
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-oracle_user} -d ${POSTGRES_DB:-oracle_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.backend
+    image: oracle-backend:0.1.0
+    container_name: oracle-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      DEBUG: "false"
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-oracle_db}
+      POSTGRES_USER: ${POSTGRES_USER:-oracle_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-oracle_production_secure_pass_2026}
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-oracle_user}:${POSTGRES_PASSWORD:-oracle_production_secure_pass_2026}@db:5432/${POSTGRES_DB:-oracle_db}
+      WAIT_FOR_DB: "true"
+      RUN_MIGRATIONS: "true"
+      DB_CONNECT_TIMEOUT: "30"
+      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
+      PERMITTED_LOCAL_ROOTS: '["/tmp/snapshots"]'
+    networks:
+      - oracle_internal
+      - oracle_external
+    ports:
+      - "127.0.0.1:8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    image: oracle-frontend:0.1.0
+    container_name: oracle-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    networks:
+      - oracle_external
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+networks:
+  oracle_internal:
+    internal: true
+    driver: bridge
+  oracle_external:
+    driver: bridge
+
+volumes:
+  oracle_pgdata:
+    name: oracle_pgdata

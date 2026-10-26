@@ -1,0 +1,7 @@
+[project]
+name = "benchmark-proj-17"
+version = "0.1.0"
+description = "Controlled fixture testing incomplete dependency declarations in manifests."
+dependencies = [
+    "requests>=2.31.0",
+]

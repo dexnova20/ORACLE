@@ -1,0 +1,5 @@
+[project]
+name = "proj-08-data-val"
+version = "0.1.0"
+description = "Project with runtime timestamp parsing bug"
+dependencies = []

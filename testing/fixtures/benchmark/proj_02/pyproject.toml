@@ -1,0 +1,5 @@
+[project]
+name = "proj-02-syntax"
+version = "0.1.0"
+description = "Project with syntax error"
+dependencies = []

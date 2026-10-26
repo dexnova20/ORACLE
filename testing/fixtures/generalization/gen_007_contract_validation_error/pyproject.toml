@@ -1,0 +1,4 @@
+[project]
+name = "user-api"
+version = "1.0.0"
+dependencies = ["pydantic>=2.0"]

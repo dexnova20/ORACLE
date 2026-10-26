@@ -1,0 +1,5 @@
+[project]
+name = "benchmark-proj-14"
+version = "0.1.0"
+description = "Controlled fixture testing structural variations in healthy projects."
+dependencies = []

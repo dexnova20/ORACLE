@@ -1,0 +1,5 @@
+[project]
+name = "proj-03-unresolved"
+version = "0.1.0"
+description = "Project with unresolved internal import"
+dependencies = []
