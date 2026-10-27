@@ -210,20 +210,112 @@ The database architecture is designed for operational resilience, strict type en
 
 ---
 
-## 5. Frontend Architecture & API Contracts
+## 5. Frontend Architecture & Diagnostic Visualization System
 
-The frontend is structured around explicit contracts, type safety, and clean component isolation:
+The frontend is a bespoke, production-grade Next.js 16 / React 19 web application engineered to transform dense diagnostic and architectural graphs into an intuitive, evidence-driven investigation experience.
 
-1. **Next.js App Router**: Built with Next.js 16 and React 19. Root layout provides metadata and viewport shells, while page components consume client-side hooks for live diagnostics.
-2. **Component Separation**:
-   - UI presentation is isolated from network fetch logic. Components receive typed data props or invoke centralized client functions.
-   - Distinct components exist for navigation status ([`Navbar`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/components/Navbar.tsx)), live system diagnostic presentation ([`StatusCard`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/components/StatusCard.tsx)), on-demand probes ([`HealthCheckAction`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/components/HealthCheckAction.tsx)), and roadmap visualization ([`DiagnosticWorkflowPreview`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/components/DiagnosticWorkflowPreview.tsx)).
-3. **Strict Contract Alignment**:
-   - TypeScript interfaces in [`frontend/src/types/api.ts`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/types/api.ts) directly mirror the backend Pydantic models in [`backend/oracle/api/v1/endpoints/health.py`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/backend/oracle/api/v1/endpoints/health.py).
-   - Discriminated union [`AsyncState<T>`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/frontend/src/types/api.ts#L22-L28) cleanly models `idle`, `loading`, `success`, and `error` states without implicit `any` or ambiguous nullable properties.
-4. **CORS Security Boundary**:
-   - Browser requests originate from `http://localhost:3000` to `http://localhost:8000`.
-   - FastAPI's `CORSMiddleware` in [`oracle.main`](file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/backend/oracle/main.py#L29-L35) explicitly allows `http://localhost:3000` and `http://127.0.0.1:3000` with credential support. Wildcard origins (`*`) with credentials enabled are strictly prohibited.
+### 5.1 Design Philosophy & Visual Identity (Yukai Du Inspiration)
+
+The user interface draws inspiration from the design philosophy of Yukai Du's illustration portfolio, prioritizing:
+- **Visual Identity First**: A recognizable engineering palette anchored on a deep navy/charcoal foundation (`#070a12`, `#0a0f1d`, `#0d1424`), hairline borders (`border-slate-800/80`), and high-contrast typography.
+- **Content Does the Talking**: System dependency maps, empirical evidence records, and ranked causal hypotheses take center stage over decorative clutter.
+- **Clean, Airy Layouts**: Generous spacing, distinct panel division, and clear visual hierarchy without monolithic, generic cards.
+- **Purposeful Motion**: Subtle animations communicate live system telemetry and dependency relationships:
+  - `@keyframes flow-edge`: Flowing dashes on SVG bezier dependency edges showing causal direction.
+  - `@keyframes pulse-node`: Pulsating glow on defective or active components.
+  - Smooth micro-interactions on hover and selection without jarring layout shifts.
+- **Minimal Typography**: Monospace fonts (`JetBrains Mono` / `ui-monospace`) for code coordinates, hashes, and evidence IDs; clean geometric sans-serif for diagnostic rationales.
+- **Color Signifiers**:
+  - `Electric Cyan` (`#22d3ee`): System navigation, primary actions, and dependency links.
+  - `Violet / Indigo` (`#a78bfa`): Diagnostic probes and verification plans.
+  - `Emerald` (`#34d399`): Analyzed healthy components, direct evidence, and verified outcomes.
+  - `Amber` (`#fbbf24`): Unresolved dependencies and uncertain hypotheses.
+  - `Rose` (`#f87171`): Syntax faults, contradictory evidence, and execution errors.
+
+### 5.2 Application Route Architecture (Next.js 16 App Router)
+
+The frontend organizes features across six dedicated application routes:
+
+```
+frontend/src/app/
+├── layout.tsx                  # Root layout, dark background (#070a12), metadata, viewport
+├── globals.css                 # Theme variables, custom thin scrollbars, animations
+├── page.tsx                    # Route / (Landing Page & Hero Centerpiece)
+├── dashboard/
+│   └── page.tsx                # Route /dashboard (Target workspace selector & recent runs)
+├── diagnostics/
+│   └── new/
+│       └── page.tsx            # Route /diagnostics/new (Ingestion & telemetry form)
+├── workspace/
+│   └── page.tsx                # Route /workspace (Live 3-panel diagnostic workspace)
+├── history/
+│   └── page.tsx                # Route /history (Searchable diagnostic runs table)
+└── reports/
+    └── [id]/
+        └── page.tsx            # Route /reports/[id] (Diagnostic deliverable report view)
+```
+
+- **Landing Page (`/`)**: Hero headline ("Find the fault. Follow the evidence."), an interactive dependency map centerpiece demonstrating real-time node inspection, 3 core capability cards, a 5-step workflow sequence (`Ingest → Map → Investigate → Verify → Report`), and an engineering footer.
+- **Main Dashboard (`/dashboard`)**: Persistent status indicator, target workspace selector, prominent New Diagnosis CTA, recent diagnostic runs retrieved from the live backend, run status badges, and helpful empty state.
+- **New Diagnosis Workspace (`/diagnostics/new`)**: Repository ingestion format selector (`file:///` local directory, `https://` remote git), path validation, telemetry inputs (symptom description, stack trace with automated secret scrubbing notice), and dynamic container execution confirmation modal.
+- **Live Diagnostic Workspace (`/workspace`)**: The primary diagnostic command center featuring a 3-panel synchronized layout.
+- **Run History (`/history`)**: Searchable, filterable audit trail of past diagnostic runs with direct navigation to the workspace or report views.
+- **Diagnostic Report View (`/reports/[id]`)**: Polished final deliverable view wrapped in a `<Suspense>` boundary, rendering executive summary, explicit diagnostic status labels, verified outcomes, and remediation guidance.
+
+### 5.3 Core Component Architecture
+
+```
+frontend/src/components/
+├── AppShell.tsx                        # Persistent brand navbar, target context & live backend status
+├── InteractiveSystemMap.tsx            # Interactive SVG & grid dependency map with inspector drawer
+├── EvidenceToHypothesisExplorer.tsx    # Signature interaction: hypothesis card list with provenance links
+├── EvidenceInspector.tsx               # Deep evidence inspection drawer with category filtering
+├── DiagnosticWorkspace.tsx             # 3-panel split layout with tablet/mobile tab switcher
+├── DiagnosticReportView.tsx            # Final deliverable view with explicit status badges
+├── NewDiagnosisForm.tsx                # Target configuration, telemetry scrubbing & dynamic gating
+└── RunHistoryTable.tsx                 # Searchable, filterable history table
+```
+
+#### 1. `AppShell` (`frontend/src/components/AppShell.tsx`)
+Provides a consistent shell across all routes with ORACLE branding (`Ω ORACLE v0.1`), active route navigation, active target workspace display, live backend health polling (`GET /api/v1/health`), and dynamic persistence mode detection (`status.persistence_mode === 'in_memory_transient'` vs `'durable_postgresql'`).
+
+#### 2. `InteractiveSystemMap` (`frontend/src/components/InteractiveSystemMap.tsx`)
+Visualizes the architectural component graph with SVG bezier curves. Operates in dual-mode:
+- **Live Mode**: Consumes real `DiagnosticSystemMap` from the diagnostic report, plotting components and typed edges.
+- **Demo Mode**: Plots a labeled architectural model on the landing page for demonstration.
+- **Interactivity**: Clicking a node selects it across the workspace, updates the active component state, and opens a component drawer displaying imports, syntax errors, and linked evidence records.
+
+#### 3. `EvidenceToHypothesisExplorer` (`frontend/src/components/EvidenceToHypothesisExplorer.tsx`)
+Implements ORACLE's signature diagnostic interaction:
+- Renders ranked causal hypotheses with relative scores (0–100) and confidence badges (`High`, `Medium`, `Low`, `Uncertain`).
+- Displays score rationales, alternative explanations, planned candidate probes, and verification outcomes.
+- **Bidirectional Illumination**: Selecting a hypothesis highlights the affected component in the `InteractiveSystemMap` and illuminates supporting (`✓`) and contradictory (`✕`) evidence chips that navigate directly into the `EvidenceInspector`.
+
+#### 4. `EvidenceInspector` (`frontend/src/components/EvidenceInspector.tsx`)
+Provides deep empirical evidence inspection:
+- Filter pills by evidence category (`All`, `Syntax`, `Dependency`, `Manifest`, `Telemetry`).
+- Reliability classification badges (`Direct Observation`, `Inferred Signal`, `Limited Context`).
+- Renders sanitized log excerpts, source component coordinates, extraction methods, and diagnostic limitations.
+
+#### 5. `DiagnosticWorkspace` (`frontend/src/components/DiagnosticWorkspace.tsx`)
+Assembles the 3-panel workspace on desktop:
+- **Left Panel**: `InteractiveSystemMap` (Dependency graph & component inspector).
+- **Center Panel**: `EvidenceToHypothesisExplorer` (Investigation state, candidate hypotheses, verification plan).
+- **Right Panel**: `EvidenceInspector` (Discrete empirical evidence records).
+- On mobile/tablet screens, switches cleanly into a tabbed interface (`Map`, `Hypotheses`, `Evidence`) to prevent clutter while preserving active selection states.
+
+### 5.4 State Management, Contracts & Backend Alignment
+
+- **Strict Type Alignment**: `frontend/src/types/api.ts` provides complete TypeScript contracts matching backend Pydantic models (`DiagnosticReport`, `DiagnosticSystemMap`, `FaultHypothesis`, `DiagnosticEvidenceRecord`, `DiagnosticProbe`, `ProbeResult`, `VerificationOutcome`, `Repository`).
+- **Resilient API Client (`frontend/src/lib/api.ts`)**: Implements bounded timeouts via `AbortController`, graceful JSON error parsing, typed HTTP helper functions, and error unwrapping.
+- **Zero Hallucinated Metrics**: All diagnostic results and runs displayed in the dashboard, workspace, history, and report views derive exclusively from real backend API endpoints (`/api/v1/repositories`, `/api/v1/diagnostics/runs`, `/api/v1/diagnostics/{run_id}`).
+- **Suspense & Next.js 16 Prerender Compatibility**: Dynamic routes using client hooks (`useParams()`, `usePathname()`) are wrapped in explicit `<Suspense>` boundaries to guarantee compatibility with Next.js 16 partial prerendering (PPR) and standalone production builds.
+
+### 5.5 CORS & Security Boundary
+
+- Browser requests originate from `http://localhost:3000` to `http://localhost:8000`.
+- FastAPI's `CORSMiddleware` in `backend/oracle/main.py` explicitly whitelists `http://localhost:3000` and `http://127.0.0.1:3000` with credential support. Wildcard origins (`*`) with credentials enabled are strictly forbidden.
+- Runtime telemetry input panels explicitly inform users of automated secret scrubbing (`redact_secrets`) before submission.
 
 ---
 
@@ -1228,6 +1320,77 @@ To prevent overfitting claims and ensure methodological integrity, ORACLE separa
 3. **Documented 10-Bin Calibration**: Expected Calibration Error (ECE) is computed across 10 uniform probability bins on $[0.0, 1.0]$:
    $$\text{ECE} = \sum_{b=1}^{10} \frac{|B_b|}{N} |\text{acc}(B_b) - \text{conf}(B_b)|$$
    Demonstrating an ECE reduction from 0.6500 (heuristic points) to 0.3548 (Calibrated Random Forest).
+
+---
+
+## 22. ORACLE v0.1 Prototype Architecture, Dual-Mode Persistence & Operational Topology (Implementation 019)
+
+Implementation 019 establishes the first integrated, demonstrable release candidate designated **ORACLE v0.1**.
+
+```mermaid
+flowchart TD
+    subgraph ClientAndUI["Frontend UI Layer (Next.js 16)"]
+        Browser["User Browser"]
+        NextServer["Next.js Production Server (Port 3000)"]
+        DashboardUI["Dashboard / Systems Map / Diagnostics UI"]
+        Browser --> NextServer --> DashboardUI
+    end
+
+    subgraph APIGateway["Backend API Gateway (FastAPI / Uvicorn Port 8000)"]
+        Endpoints["REST Endpoints (/api/v1)"]
+        StatusProbe["Status Probe (/api/v1/status)"]
+        RepoEndpoint["Repositories (/api/v1/repositories)"]
+        DiagEndpoint["Diagnostics (/api/v1/repositories/{id}/diagnose)"]
+        Endpoints --> StatusProbe & RepoEndpoint & DiagEndpoint
+    end
+
+    subgraph StateLayer["Dual-Mode State Management"]
+        DBRouter{"PostgreSQL Reachable?"}
+        PostgresDB[("PostgreSQL 16\n(Durable Persistence)")]
+        MemoryCache[("DiagnosticOrchestrator\n(in_memory_transient Cache)")]
+        DBRouter -->|"Yes"| PostgresDB
+        DBRouter -->|"No (OperationalError)"| MemoryCache
+    end
+
+    subgraph OrchestratorPipeline["Polyglot Diagnostic Engine"]
+        TargetValidation["Target Ingestion & Path Security"]
+        PolyglotParsers["Polyglot AST Workers\n(Python, TS, Java, Go)"]
+        TelemetryIngestion["Runtime Telemetry & Secret Scrubber"]
+        SystemGraph["DiagnosticSystemMap Builder"]
+        HypothesisRanking["10-Class Taxonomy & Calibrated Ranker"]
+        AdaptiveProber["Adaptive Probe Planner (Shannon Entropy)"]
+        PreflightSandbox["Docker Isolation Preflight Gating"]
+        
+        TargetValidation --> PolyglotParsers
+        PolyglotParsers & TelemetryIngestion --> SystemGraph
+        SystemGraph --> HypothesisRanking --> AdaptiveProber
+        AdaptiveProber --> PreflightSandbox
+    end
+
+    DashboardUI -->|"JSON / HTTP API Client"| Endpoints
+    RepoEndpoint & DiagEndpoint --> DBRouter
+    DiagEndpoint --> OrchestratorPipeline
+```
+
+### 22.1 Dual-Mode Persistence Architecture
+ORACLE v0.1 achieves environment independence through dynamic dual-mode persistence:
+1. **`durable_postgresql` Mode**: Active when PostgreSQL 16 is accessible at `database_url`. Transactions, schema migrations (`Alembic`), and repository/diagnostic records are stored permanently in relational tables.
+2. **`in_memory_transient` Mode**: When the PostgreSQL daemon is unreachable (e.g. development laptops without active Postgres daemons), endpoints catch `sqlalchemy.exc.OperationalError` and seamlessly fall back to thread-safe in-memory stores in `DiagnosticOrchestrator` (`_repos_by_id`, `_runs_by_id`, `_latest_by_repo`).
+3. **Honest Status Reporting**: `GET /api/v1/status` directly reports `persistence_mode: "in_memory_transient"` alongside the underlying timeout reason, ensuring operators always know the durability state without silent failures or faked certainty.
+
+### 22.2 Verified Polyglot Worker Execution Boundary
+- **Python**: In-process standard library `ast`.
+- **TypeScript / JavaScript**: Isolated Node.js worker (`ts_ast_worker.js`) executing `ts.createSourceFile` with zero host runtime execution.
+- **Java**: Isolated OpenJDK worker (`JavaAstWorker.java`) executing `task.parse()` with zero compilation or class loading.
+- **Go**: Pure Python lexical and token parser (`go_parser.py`) with zero compilation or external binary dependencies.
+
+### 22.3 Prototype Demonstration Suite
+The prototype includes a single automated demonstration runner (`testing/demonstration/run_prototype_demonstration.py`) verifying four canonical scenarios:
+1. Healthy polyglot repository (clean report, zero false positives).
+2. Supported syntax defect repository (precise AST localization, provenance tracking).
+3. Runtime telemetry non-static fault (database socket timeout diagnosis, 100% secret redaction).
+4. Ambiguous / unsupported repository (explicit abstention with bounded uncertainty).
+
 
 
 

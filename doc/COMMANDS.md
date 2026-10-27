@@ -927,6 +927,84 @@ Invoke-RestMethod -Uri "http://localhost:8000/api/v1/status" -Method Get
 .\.venv\Scripts\python.exe -m pytest testing/backend/test_go_ast_parser.py testing/backend/test_telemetry_analyzer.py testing/backend/test_telemetry_e2e.py testing/ml/test_feature_leakage.py testing/ml/test_generalization_dataset.py -v
 ```
 
+---
+
+## 15. Prototype Demonstration & Release Acceptance Commands (Implementation 019 - ORACLE v0.1)
+
+### 15.1 Start Operational Prototype Services
+
+**Terminal 1 (Backend API Gateway on Port 8000):**
+```powershell
+$env:PYTHONPATH='backend'
+.\.venv\Scripts\python.exe -m uvicorn oracle.main:app --host 127.0.0.1 --port 8000
+```
+- Health Probe: `curl.exe http://127.0.0.1:8000/api/v1/health`
+- Status Probe: `curl.exe http://127.0.0.1:8000/api/v1/status`
+
+**Terminal 2 (Frontend Production Server on Port 3000):**
+```powershell
+cd frontend
+npm run start
+```
+- Dashboard UI: `http://localhost:3000`
+
+### 15.2 Run Prototype Demonstration Runner
+**Working Directory:** `<repository-root>`
+
+```powershell
+# Runs the 4 canonical demonstration cases against the live HTTP REST API:
+$env:PYTHONPATH='backend'
+.\.venv\Scripts\python.exe testing/demonstration/run_prototype_demonstration.py
+```
+
+### 15.3 Trigger End-to-End Diagnosis via HTTP API
+
+**Register Repository:**
+```powershell
+$body = @{
+    name = "demo-target"
+    url = "file:///C:/Users/mshas/OneDrive/Documents/GitHub/ORACLE/testing/fixtures/real_world/real_05_healthy_control"
+    source_type = "local_directory"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/repositories" -Method Post -ContentType "application/json" -Body $body
+```
+
+**Trigger Diagnosis with Telemetry:**
+```powershell
+$diagBody = @{
+    symptom_description = "Database connection timeout and socket error"
+    runtime_traceback = "Traceback (most recent call last):`n  File ""app/db.py"", line 10`nsocket.gaierror: Connection refused"
+} | ConvertTo-Json
+
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/repositories/<REPO_ID>/diagnose" -Method Post -ContentType "application/json" -Body $diagBody
+```
+
+**Fetch Latest Report:**
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/repositories/<REPO_ID>/diagnostics/latest" -Method Get
+```
+
+### 15.4 Full Release Regression Verification
+**Working Directory:** `<repository-root>`
+
+```powershell
+# 1. Backend and Deployment Regression Suite
+$env:PYTHONPATH='backend'
+.\.venv\Scripts\python.exe -m pytest testing/backend/ testing/deploy/ -q
+
+# 2. Machine Learning and Generalization Suite
+$env:PYTHONPATH='backend'
+.\.venv\Scripts\python.exe -m pytest testing/ml/ -v
+
+# 3. Frontend Type Check, Lint, and API Client Suite
+cd frontend
+npm run type-check
+npm run lint
+node --test ../testing/frontend/test_api_client.mjs
+```
+
+
 
 
 

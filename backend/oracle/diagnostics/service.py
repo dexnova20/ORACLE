@@ -209,10 +209,27 @@ class DiagnosticOrchestrator:
         execution_worker: Optional[DynamicExecutionWorker] = None,
     ) -> None:
         self.execution_worker = execution_worker or DynamicExecutionWorker()
-        # In-memory run stores for fast retrieval and offline execution
+        # In-memory run and repository stores for fast retrieval and offline execution
         self._runs_by_id: Dict[uuid.UUID, DiagnosticReport] = {}
         self._latest_by_repo: Dict[uuid.UUID, DiagnosticReport] = {}
         self._active_runs: Set[uuid.UUID] = set()
+        self._repos_by_id: Dict[uuid.UUID, Repository] = {}
+
+    def register_repo(self, repo: Repository) -> None:
+        """Cache a repository target in the in-memory store."""
+        self._repos_by_id[repo.id] = repo
+
+    def get_repo(self, repo_id: uuid.UUID) -> Optional[Repository]:
+        """Retrieve a cached repository target by UUID."""
+        return self._repos_by_id.get(repo_id)
+
+    def list_repos(self) -> List[Repository]:
+        """Retrieve all cached repository targets ordered by registration date."""
+        return sorted(self._repos_by_id.values(), key=lambda r: r.created_at, reverse=True)
+
+    def delete_repo(self, repo_id: uuid.UUID) -> bool:
+        """Remove a cached repository target by UUID."""
+        return self._repos_by_id.pop(repo_id, None) is not None
 
     def get_run(self, run_id: uuid.UUID) -> Optional[DiagnosticReport]:
         """Retrieve a diagnostic report by run UUID."""

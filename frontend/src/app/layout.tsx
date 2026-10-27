@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ORACLE | Software Diagnostic & Fault Isolation Platform",
+  title: "ORACLE | Adaptive Technical Diagnosis Platform",
   description:
-    "An extensible platform for inspecting software systems, identifying faults, testing components independently, and producing evidence-backed diagnoses.",
+    "An adaptive technical diagnosis platform that investigates failures, connects evidence across system components, and identifies what to check next.",
 };
 
 export default function RootLayout({
@@ -13,8 +13,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="antialiased selection:bg-zinc-200 dark:selection:bg-zinc-800">
+    <html lang="en" className="dark">
+      <body className="bg-[#070a12] text-slate-200 antialiased selection:bg-cyan-500/30 selection:text-cyan-200 min-h-screen">
         {children}
       </body>
     </html>

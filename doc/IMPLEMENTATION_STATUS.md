@@ -766,7 +766,95 @@ This document tracks implemented, tested, pending, and blocked features for the 
 
 ---
 
-## 18. Future Diagnostic Intelligence Phases
+## 18. Final Prototype Completion, Operational Readiness & Release Acceptance (Implementation 019 - ORACLE v0.1)
+
+- [x] **Prototype Operational Readiness & Dual-Mode State Management**
+  - [x] In-memory repository catalog (`register_repo`, `get_repo`, `list_repos`, `delete_repo`) in `DiagnosticOrchestrator` for graceful transient execution.
+  - [x] Transparent fallback to in-memory store in `repositories.py`, `diagnostics.py`, and `inspection.py` when PostgreSQL raises `OperationalError` (connection timeout).
+  - [x] Database errors (e.g. disk full, constraint violation) remain unmasked when PostgreSQL is connected.
+  - [x] `GET /api/v1/status` reports `persistence_mode: in_memory_transient` with full diagnostic driver and connection status.
+  - [x] Model initialization fix ensuring default UTC timestamps on `Repository` instantiation without database flush.
+  - [x] Type safety fix in `telemetry_analyzer.py` handling UUID objects cleanly during run ID string slicing.
+- [x] **Prototype Demonstration Runner (`testing/demonstration/run_prototype_demonstration.py`)**
+  - [x] Single repeatable runner verifying 4 canonical demonstration cases against the live HTTP REST API:
+    - [x] **Case 1 (Healthy Polyglot Control):** Status `completed`, primary hypothesis `No Defect`, 0 false positives.
+    - [x] **Case 2 (Supported Syntax Defect):** Status `partial`, primary hypothesis `Unhandled Runtime Exception` (confidence 70, high), exact file coordinate localization.
+    - [x] **Case 3 (Runtime Telemetry Non-Static Fault):** Status `completed`, primary hypothesis `Database Connectivity and Schema Failure` (confidence 50, medium), secret canary token 100% scrubbed.
+    - [x] **Case 4 (Ambiguous / Unsupported Target):** Status `completed`, explicit abstention reason logged, primary hypothesis `Unknown or Insufficient Evidence` (confidence 0, uncertain).
+  - [x] Formatted summary table printed with wall-clock timing, evidence counts, and redaction verification.
+  - [x] Dual-mode runner architecture: runs against live HTTP server or falls back to in-process orchestrator for CI.
+- [x] **Comprehensive Regression Verification**
+  - [x] Backend & Deploy regression suite: 172 passed, 0 failed, 4 skipped (`pytest testing/backend/ testing/deploy/`).
+  - [x] ML Generalization & Evaluation suite: 18 passed, 0 failed (`pytest testing/ml/`).
+  - [x] Frontend verification: 17 node API client tests passed, TypeScript type-check 0 errors, ESLint 0 errors, Next.js 16 production build succeeded with standalone output.
+- [x] **Formal Release Assessment & Handover Documentation**
+  - [x] Release report authored: `testing/reports/oracle_v0.1_release_report.md`.
+  - [x] Formal release verdict: `ACCEPTED WITH LIMITATIONS` (honestly acknowledging unverified Docker isolation and PostgreSQL daemon on development host).
+
+---
+
+## 19. Complete Frontend Design & Interactive Diagnosis Experience (Implementation 020 - Frontend)
+
+- [x] **Yukai Du-Inspired Visual Identity & Design System**
+  - [x] Bespoke dark navy/charcoal foundations (`#070a12`, `#0a0f1d`, `#0d1424`) with subtle hairline borders (`border-slate-800/80`) and airy typography.
+  - [x] Electric cyan (`#22d3ee`) and violet (`#a78bfa`) selective accents communicating live system activity, flow, and node states.
+  - [x] Purposeful animations: flowing SVG bezier dependency edges (`flow-edge`), pulsating active nodes (`pulse-node`), and crisp micro-interactions.
+  - [x] Custom slim scrollbars, monospace metadata chips, and responsive side navigation.
+- [x] **Application Shell & Real-Time Backend State Reflection (`frontend/src/components/AppShell.tsx`)**
+  - [x] Persistent navigation bar with ORACLE branding (`Ω ORACLE v0.1`) and active route highlighting (`/`, `/dashboard`, `/diagnostics/new`, `/workspace`, `/history`).
+  - [x] Live backend connectivity polling (`GET /api/v1/health` and `GET /api/v1/status`) rendering real-time connection status badges (`Online` / `Offline`).
+  - [x] Transparent persistence mode indicator: automatically alerts users whether the backend is operating in `in_memory_transient` or `durable_postgresql` mode.
+  - [x] Displays active target workspace context and container execution gating status (`Docker: Offline / Gated`).
+- [x] **Interactive System Map (`frontend/src/components/InteractiveSystemMap.tsx`)**
+  - [x] Dual-mode component supporting both real backend `DiagnosticSystemMap` graphs and an interactive demo model for the landing page.
+  - [x] Interactive SVG dependency visualization with status-coded nodes: `analyzed` (emerald), `syntax_error` (rose), `unresolved` (amber), `blocked` (purple).
+  - [x] Dynamic dependency edges indicating direction, unresolved status, and animated flows.
+  - [x] Interactive node inspector drawer revealing component path, language ecosystem, outgoing imports, syntax error coordinates, and component-linked evidence.
+  - [x] Clear map legend and summary counter chips (Total, Internal, External, Syntax Errors, Unresolved).
+- [x] **Signature Interaction: Evidence-to-Hypothesis Explorer (`frontend/src/components/EvidenceToHypothesisExplorer.tsx`)**
+  - [x] Center-panel interactive card list displaying all causal hypotheses ranked by heuristic relative score.
+  - [x] Confidence badges (`High Confidence`, `Medium Confidence`, `Low Confidence`, `Uncertain`) and verification badges (`Verified`, `Partially Verified`, `Candidate`, `Blocked`, `Unsupported`).
+  - [x] Interactive selection triggers bidirectional cross-panel illumination: highlights the affected component in the System Map and pins related evidence in the Evidence Inspector.
+  - [x] Detailed inspection mode exposing diagnostic score rationale, evidence provenance chips (supporting & contradictory), confounding alternative explanations, candidate probes planned, verification outcomes, and recommended remediation steps.
+- [x] **Deep Evidence Inspector (`frontend/src/components/EvidenceInspector.tsx`)**
+  - [x] Right-panel inspector organizing empirical evidence records with category filter tabs (`All`, `Syntax`, `Dependency`, `Manifest`, `Telemetry`).
+  - [x] Reliability badges (`Direct Observation`, `Inferred Signal`, `Limited Context`).
+  - [x] Full record view rendering evidence ID, extraction method, source component coordinate, sanitized observed log excerpts, and diagnostic limitations.
+  - [x] Two-way link chips connecting evidence directly to supporting or contradictory hypotheses.
+- [x] **Live 3-Panel Diagnostic Workspace (`frontend/src/components/DiagnosticWorkspace.tsx` & `src/app/workspace/page.tsx`)**
+  - [x] Cohesive desktop 3-panel split view (Left: System Map | Center: Hypotheses & Probes | Right: Evidence Inspector) with independent scroll regions.
+  - [x] Responsive tablet/mobile tab switcher allowing seamless single-column navigation without loss of state.
+  - [x] Workspace header with active target selector, run ID badge, and live refresh capability.
+- [x] **New Diagnosis Ingestion & Telemetry scrubbing (`frontend/src/components/NewDiagnosisForm.tsx` & `src/app/diagnostics/new/page.tsx`)**
+  - [x] Supported ingestion format selector: local workspace (`file:///`) and remote repository (`https://`).
+  - [x] Pre-flight validation, path format checks, and ecosystem hints.
+  - [x] Runtime telemetry input panel for non-static faults (symptom description, stack trace) with explicit secret scrubbing disclosure (`redact_secrets`).
+  - [x] Safe dynamic execution confirmation modal with Docker availability gating and workload profile selection.
+- [x] **Diagnostic Deliverable Report View (`frontend/src/components/DiagnosticReportView.tsx` & `src/app/reports/[id]/page.tsx`)**
+  - [x] Polished final deliverable view suitable for engineering review and executive handover.
+  - [x] Executive diagnosis summary with timestamp, target repository, run UUID, duration, and persistence mode.
+  - [x] Explicit status badges (`Verified`, `Supported by evidence`, `Hypothesis`, `Blocked`, `Untested`, `Uncertain`, `Unsupported`).
+  - [x] Primary fault hypotheses with confidence scores, affected components, and recommended remediation.
+  - [x] Full evidence provenance audit trail with extraction method, reliability classification, and sanitized excerpts.
+  - [x] Diagnostic probes and verification outcomes section detailing applied safety policies.
+  - [x] Explicit sections for remaining uncertainties and diagnostic limitations.
+- [x] **Run History View (`frontend/src/components/RunHistoryTable.tsx` & `src/app/history/page.tsx`)**
+  - [x] Searchable, filterable table for past diagnostic runs using real backend API data (`GET /api/v1/diagnostics/runs`).
+  - [x] Quick filters by status (`completed`, `partial`, `abstained`, `failed`) and text search across repository name, target path, and run ID.
+  - [x] Direct navigation links to the Live Workspace and the Report Deliverable view.
+- [x] **Landing Page (`src/app/page.tsx`) & Main Dashboard (`src/app/dashboard/page.tsx`)**
+  - [x] Landing page with hero headline ("Find the fault. Follow the evidence."), interactive centerpiece dependency map, 3 core capabilities, 5-stage workflow sequence (`Ingest → Map → Investigate → Verify → Report`), and engineering footer.
+  - [x] Dashboard with system invariant summary cards, target workspace selector, prominent New Diagnosis CTA, recent diagnostic runs from real backend, run status badges, and helpful empty state.
+- [x] **Complete Quality & Production Verification**
+  - [x] 17/17 passing client tests (`testing/frontend/test_api_client.mjs`).
+  - [x] 0 TypeScript errors (`tsc --noEmit`).
+  - [x] 0 ESLint errors and 0 warnings (`eslint`).
+  - [x] Optimized Next.js 16 production build (`npm run build`) with standalone output.
+  - [x] All 6 routes verified live with HTTP 200 responses against the running FastAPI backend.
+
+---
+
+## 20. Future Diagnostic Intelligence Phases
 
 - [ ] Active diagnostic loop coordinating dynamic container probes with LLM-assisted forensic report narrative generation.
 - [ ] Automated remediation code diff generation with isolated sandbox verification.

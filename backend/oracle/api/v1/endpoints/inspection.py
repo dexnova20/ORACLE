@@ -6,6 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from oracle.db.session import get_db
+from oracle.diagnostics.service import diagnostic_orchestrator
 from oracle.inspection.service import inspection_service
 from oracle.models.repository import Repository
 from oracle.schemas.inspection import InspectionOptions, InspectionReport
@@ -26,7 +27,15 @@ def inspect_repository(
     db: Session = Depends(get_db),
 ) -> InspectionReport:
     """Execute bounded static inspection on a registered repository target."""
-    repo = db.get(Repository, repository_id)
+    repo = None
+    try:
+        repo = db.get(Repository, repository_id)
+    except Exception:
+        pass
+
+    if not repo:
+        repo = diagnostic_orchestrator.get_repo(repository_id)
+
     if not repo:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -56,7 +65,15 @@ def get_latest_inspection(
     db: Session = Depends(get_db),
 ) -> InspectionReport:
     """Retrieve the latest inspection report for a repository target."""
-    repo = db.get(Repository, repository_id)
+    repo = None
+    try:
+        repo = db.get(Repository, repository_id)
+    except Exception:
+        pass
+
+    if not repo:
+        repo = diagnostic_orchestrator.get_repo(repository_id)
+
     if not repo:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

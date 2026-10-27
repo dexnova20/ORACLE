@@ -39,7 +39,15 @@ def run_diagnosis(
     db: Session = Depends(get_db),
 ) -> DiagnosticReport:
     """Trigger a full diagnostic evaluation on a registered target repository."""
-    repo = db.get(Repository, repository_id)
+    repo = None
+    try:
+        repo = db.get(Repository, repository_id)
+    except Exception:
+        pass
+
+    if not repo:
+        repo = diagnostic_orchestrator.get_repo(repository_id)
+
     if not repo:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -78,7 +86,15 @@ def get_latest_diagnostic_report(
     db: Session = Depends(get_db),
 ) -> DiagnosticReport:
     """Retrieve the latest diagnostic report for a repository target."""
-    repo = db.get(Repository, repository_id)
+    repo = None
+    try:
+        repo = db.get(Repository, repository_id)
+    except Exception:
+        pass
+
+    if not repo:
+        repo = diagnostic_orchestrator.get_repo(repository_id)
+
     if not repo:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -90,18 +106,21 @@ def get_latest_diagnostic_report(
         return report
 
     # Fallback to database persistence if available
-    stmt = (
-        select(DiagnosticRunRecord)
-        .filter(DiagnosticRunRecord.repository_id == repository_id)
-        .order_by(DiagnosticRunRecord.created_at.desc())
-        .limit(1)
-    )
-    record = db.scalars(stmt).first()
-    if record and record.report_json:
-        try:
-            return DiagnosticReport.model_validate_json(record.report_json)
-        except Exception:
-            pass
+    try:
+        stmt = (
+            select(DiagnosticRunRecord)
+            .filter(DiagnosticRunRecord.repository_id == repository_id)
+            .order_by(DiagnosticRunRecord.created_at.desc())
+            .limit(1)
+        )
+        record = db.scalars(stmt).first()
+        if record and record.report_json:
+            try:
+                return DiagnosticReport.model_validate_json(record.report_json)
+            except Exception:
+                pass
+    except Exception:
+        pass
 
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,

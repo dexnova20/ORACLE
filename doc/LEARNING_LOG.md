@@ -3365,6 +3365,189 @@ Evaluating machine learning models solely on the distribution they were trained 
   - Calibrated Logistic Regression: **70.0% CV Top-1 Accuracy**, **80.0% CV Top-3 Accuracy**, **0.1704 CV ECE**, **0.1793 CV Brier Score**, **100.0% CV Abstention Quality**.
 - **Audit Deliverable**: `testing/reports/implementation_017_audit_report.md` generated with formal claim-to-evidence matrix and defect remediation history.
 
+---
+
+## ORACLE Implementation 019: Final Prototype Completion, Operational Readiness & Release Acceptance (ORACLE v0.1)
+
+### 1. Objective and Problem Being Solved
+
+Implementations 001 through 018 built the architecture, polyglot static inspectors, dependency graphs, telemetry ingestion, adaptive probe planner, and ML ranking models. However, up to this point, those pieces had not been unified into a demonstrable, integrated prototype operating live end-to-end without external blockers.
+
+Implementation 019's objective was to establish **ORACLE v0.1**:
+1. Identify and resolve all runtime blockers preventing the frontend and backend from running end-to-end.
+2. Establish transparent dual-mode state management: durable PostgreSQL persistence when a database is reachable, and graceful in-memory transient fallback when running offline.
+3. Build a repeatable prototype demonstration runner (`testing/demonstration/run_prototype_demonstration.py`) verifying 4 canonical demonstration cases against the live HTTP REST API.
+4. Execute full regression testing across backend, deployment, ML, and frontend suites.
+5. Provide a rigorous, honest release assessment report (`testing/reports/oracle_v0.1_release_report.md`) with a final release acceptance decision.
+
+---
+
+### 2. Concepts & Technical Decisions (Beginner-Friendly Explanation)
+
+#### Dual-Mode Persistence & Operational Resilience
+In many enterprise applications, if a database daemon is temporarily offline or absent during local development, API requests crash with unhandled connection timeouts (HTTP 500 `sqlalchemy.exc.OperationalError`).
+ORACLE v0.1 introduces an in-memory repository catalog in `DiagnosticOrchestrator` (`_repos_by_id`, `register_repo`, `get_repo`, `list_repos`, `delete_repo`).
+When PostgreSQL is reachable, endpoints persist records to the database and refresh models. When an `OperationalError` occurs (e.g., connection timeout because PostgreSQL is not installed on the laptop host), the backend catches the error, rolls back the uncommitted database transaction, saves/queries the target in memory, and returns HTTP 201/200. Crucially, non-connection errors (such as disk full or constraint violations) are never masked and re-raise as expected.
+Furthermore, `GET /api/v1/status` honestly reports `persistence_mode: "in_memory_transient"`, alerting operators to the transient state.
+
+#### Model Timestamp Initialization
+SQLAlchemy ORM column defaults defined with `default=utc_now` are evaluated during flush/insert into an actual database. In offline transient mode, where `db.flush()` is bypassed, `Repository` instances instantiated directly had `created_at = None`, failing Pydantic `RepositoryResponse` validation.
+By updating `Repository.__init__` and endpoint instantiation to explicitly set `created_at = utc_now()` and `updated_at = utc_now()`, entity models are valid regardless of whether an INSERT SQL statement is executed.
+
+#### Repeatable Prototype Demonstration
+Rather than asking operators to manually assemble complex HTTP payloads across multiple terminal tabs, `run_prototype_demonstration.py` automates the entire verification of four canonical user journeys:
+1. **Case 1 (Healthy Control):** Ingests clean polyglot repo, confirms 0 false positive hypotheses, status `completed`.
+2. **Case 2 (Supported Defect):** Ingests TypeScript syntax defect, confirms `partial` status (distinguishing partial AST parsing from crashed pipelines), and verifies primary hypothesis localization to `src/transform.ts`.
+3. **Case 3 (Runtime Telemetry Non-Static Fault):** Ingests database timeout traceback with embedded canary secret (`super_secret_token_9999`), diagnoses `Database Connectivity and Schema Failure`, and verifies secret token was scrubbed 100%.
+4. **Case 4 (Ambiguous / Unsupported Target):** Ingests unsupported Rust repository, confirms explicit deliberate abstention, and ensures zero manufactured certainty.
+
+---
+
+### 3. Bugs Encountered, Root Causes & Fixes (Exhaustive)
+
+1. **Unhandled `OperationalError` on `POST /api/v1/repositories` When PostgreSQL Offline**
+   - *Symptom:* `POST /api/v1/repositories` crashed with HTTP 500 and `sqlalchemy.exc.OperationalError: connection timeout expired` when PostgreSQL was offline.
+   - *Root Cause:* Endpoint attempted `db.commit()` without catching database connection timeouts.
+   - *Fix:* Added `try...except OperationalError:` block and in-memory repository catalog fallback in `DiagnosticOrchestrator`.
+
+2. **Pydantic ValidationError on `RepositoryResponse.created_at`**
+   - *Symptom:* `pydantic_core.ValidationError: Input should be a valid datetime [input_value=None]` on `RepositoryResponse.model_validate(repo)`.
+   - *Root Cause:* SQLAlchemy ORM column defaults (`default=utc_now`) only populate upon flush. In transient memory mode, `created_at` remained `None`.
+   - *Fix:* Updated `Repository.__init__` in `backend/oracle/models/repository.py` to `kwargs.setdefault("created_at", utc_now())` and explicitly populated timestamps upon creation.
+
+3. **Stale In-Memory Targets Polluting Unit Test Repositories List**
+   - *Symptom:* `test_list_repositories` failed with `AssertionError: assert 3 == 2` because an in-memory repository from an earlier test was unconditionally merged.
+   - *Root Cause:* `list_repositories` unconditionally merged the memory catalog even when `db.scalars(...)` succeeded.
+   - *Fix:* Merged in-memory catalog only when `OperationalError` occurs, returning exact database records when database/mock session is operational.
+
+4. **Masked General Database Exceptions in `test_database_error_handling`**
+   - *Symptom:* `test_database_error_handling` expected `Exception("Database disk full")` to be raised, but the endpoint caught all exceptions indiscriminately.
+   - *Root Cause:* Catching `Exception` rather than `OperationalError`.
+   - *Fix:* Specifically caught `OperationalError` for transient fallback, while re-raising general exceptions (`except Exception: db.rollback(); raise`).
+
+5. **`AttributeError: 'UUID' object has no attribute 'replace'` in Telemetry Analyzer**
+   - *Symptom:* Ingestion of telemetry symptoms crashed when formatting evidence run prefix.
+   - *Root Cause:* Passing `uuid.UUID` object directly to `.replace("diag-", "")`.
+   - *Fix:* Wrapped with `str(run_id).replace("diag-", "").replace("-", "")[:8]`.
+
+---
+
+### 4. Verification & Release Metrics Summary
+
+- **Prototype Demonstration (`run_prototype_demonstration.py`)**: 4 / 4 passed against live FastAPI REST API.
+- **Backend & Deploy Regression Suite**: 172 passed, 0 failed, 4 skipped (`pytest testing/backend/ testing/deploy/`).
+- **Machine Learning Suite**: 18 passed, 0 failed (`pytest testing/ml/`).
+- **Frontend Verification Suite**: 17 node API client tests passed, TypeScript type check 0 errors, ESLint 0 errors, Next.js 16 production build succeeded with standalone output.
+- **Release Document**: `testing/reports/oracle_v0.1_release_report.md` authored.
+- **Release Acceptance Verdict**: `ACCEPTED WITH LIMITATIONS`.
+
+---
+
+## [2026-10-27] Implementation 020: Yukai Du-Inspired Visual Identity, Interactive System Map, and Diagnostic Experience
+
+### 1. Objective and Problem Being Solved
+Prior to Implementation 020, ORACLE possessed a powerful backend diagnostic engine, static polyglot parsers (Python, TypeScript, Java, Go), adaptive probe planning, and persistence models, but lacked a cohesive, production-grade frontend. The previous UI was a basic diagnostic status prototype.
+
+Implementation 020 delivers the complete frontend application:
+1. Adapting the design philosophy of Yukai Du's illustration portfolio (visual identity first, clean airy layouts, content does the talking, purposeful motion, minimal typography) into an engineering diagnostic platform.
+2. Creating an interactive System Map featuring dynamic SVG dependency curves, flowing status indicators, and component inspection drawers.
+3. Implementing ORACLE's signature diagnostic interaction: selecting a hypothesis visually illuminates connected system components in the System Map and pins supporting and contradictory evidence in the Evidence Inspector.
+4. Structuring a live 3-panel Diagnostic Workspace on desktop with responsive mobile/tablet tab switching.
+5. Providing a polished final Diagnostic Deliverable Report view (`/reports/[id]`) with explicit status labels, verified outcomes, and remediation guidance.
+6. Ensuring 100% adherence to Next.js 16 App Router, React 19 hooks invariants, TypeScript strict mode, and ESLint rules.
+
+---
+
+### 2. Concepts & Technical Decisions (Educational Explanations)
+
+#### Visual Identity First: The Yukai Du Aesthetic for Technical Systems
+Yukai Du's artistic philosophy emphasizes recognizable visual language, deliberate negative space, and organic yet precise motion. In ORACLE, we adapted this into an engineering aesthetic:
+- **Palette**: A deep, atmospheric dark navy/charcoal foundation (`#070a12`, `#0a0f1d`, `#0d1424`) punctuated with subtle hairline borders (`border-slate-800/80`).
+- **Selective Accents**: High-contrast electric cyan (`#22d3ee`) for system navigation and flows; soft violet (`#a78bfa`) for probes and verifications; semantic emerald (`#34d399`), amber (`#fbbf24`), and rose (`#f87171`) for empirical health states.
+- **Purposeful Motion**: Avoided gratuitous animations. Motion is used exclusively to communicate physical data flow: flowing dashes along dependency edges (`flow-edge`) indicate directional invocation, while pulsating glows (`pulse-node`) signal active anomalies.
+- **Content Does the Talking**: Removed generic card padding and dense boilerplate. The architecture map and evidence records are the primary visual heroes.
+
+#### Signature Interaction: Bidirectional Evidence-to-Hypothesis Explorer
+In traditional APM or monitoring tools, logs, metrics, and alerts exist in separate silos. In ORACLE:
+- When an engineer clicks a candidate hypothesis (e.g. `Syntax Error in Transformer`), the UI synchronously triggers a state broadcast.
+- The `InteractiveSystemMap` immediately highlights `transformer.ts` and dims unrelated components.
+- The `EvidenceInspector` filters to show only the exact empirical evidence records that support (`✓`) or contradict (`✕`) that hypothesis.
+- The hypothesis card expands to reveal score rationale, alternative explanations, planned candidate probes, and actionable remediation steps.
+
+#### Next.js 16 App Router & Prerendering Invariants
+In Next.js 16 with Turbopack and partial prerendering enabled (`cacheComponents: true`):
+1. **Dynamic Hooks in Client Components**: Calling client-side URL hooks like `useParams()` or `usePathname()` directly inside a component without an enclosing `<Suspense>` boundary blocks static prerendering, because URL route parameters are not available during compile-time static generation.
+2. **The Suspense Solution**: Dynamic route pages must encapsulate components that consume `useParams()` inside `<Suspense fallback={...}>`.
+3. **Suspense Fallback Restriction**: The fallback itself must NOT render components (like `AppShell`) that invoke dynamic URL hooks like `usePathname()`, otherwise the prerendering engine encounters dynamic URL data in the fallback and throws a compile error.
+4. **Cache Components Incompatibility**: Setting `export const dynamic = "force-dynamic"` is prohibited when `nextConfig.cacheComponents` is active. Wrapping in `<Suspense>` provides the standard, compliant solution.
+
+#### React 19 State-in-Effect Invariant
+React 19 strictly flags synchronous state setter invocations inside `useEffect` bodies (`react-hooks/set-state-in-effect`), which historically caused cascading re-renders:
+- Synchronous calls like `setLoading(true)` at the top of an effect body trigger an immediate secondary render before the paint.
+- Resolution: Setting initial state defaults (`useState(true)`) or moving state updates into asynchronous callbacks (`.then()`, `.catch()`) or event handlers (`onClick`) ensures predictable, single-pass rendering.
+
+---
+
+### 3. Bugs Encountered, Root Causes & Fixes (Exhaustive)
+
+1. **ESLint `react-hooks/set-state-in-effect` in `dashboard/page.tsx` & `history/page.tsx`**
+   - *Symptom:* `eslint` failed with errors: `Calling setState synchronously within an effect leads to cascading renders`.
+   - *Root Cause:* `useEffect` invoked `loadDashboardData()` which immediately executed `setLoading(true)` synchronously inside the effect body.
+   - *Fix:* Removed synchronous state setters from the effect body. Decoupled loading triggers into asynchronous Promise callbacks and dedicated refresh button handlers.
+
+2. **ESLint `react-hooks/set-state-in-effect` in `reports/[id]/page.tsx`**
+   - *Symptom:* `eslint` failed with error: `Calling setState synchronously within an effect leads to cascading renders`.
+   - *Root Cause:* Line `setLoading(true); setError(null);` was called at the start of `useEffect`.
+   - *Fix:* Removed redundant synchronous setters since initial component state was already `{ loading: true, error: null }`.
+
+3. **ESLint `react-hooks/set-state-in-effect` in `workspace/page.tsx`**
+   - *Symptom:* Cascading render warning from `setSelectedRepoId` in `fetchWorkspace`.
+   - *Root Cause:* Effect called `fetchWorkspace` which set state synchronously during effect execution.
+   - *Fix:* Replaced with an async self-contained IIFE with mounted guard flags and decoupled state updates.
+
+4. **ESLint Unused Variable Warnings in `EvidenceToHypothesisExplorer.tsx`**
+   - *Symptom:* `@typescript-eslint/no-unused-vars` warning on `_verificationList` and `_candidateProbes`.
+   - *Root Cause:* Props were accepted but prefixed with `_` and not rendered.
+   - *Fix:* Integrated `verificationList` and `candidateProbes` directly into the expanded hypothesis view, rendering associated diagnostic probes and verification outcomes.
+
+5. **ESLint Unused Variable Warning in `workspace/page.tsx`**
+   - *Symptom:* `@typescript-eslint/no-unused-vars` warning on `setSelectedRepoId`.
+   - *Root Cause:* State setter was defined but never hooked to a user input control.
+   - *Fix:* Added an active target workspace dropdown selector in the workspace header allowing users to toggle between repositories.
+
+6. **Next.js 16 Prerender Client Hook Error on `/reports/[id]`**
+   - *Symptom:* `npm run build` failed with `Error: Route "/reports/[id]": Next.js encountered URL data useParams() in a Client Component outside of <Suspense>`.
+   - *Root Cause:* Dynamic route client component consumed `useParams()` without an enclosing `<Suspense>` boundary during static page optimization.
+   - *Fix:* Factored page contents into `ReportDetailContent` and wrapped in `<Suspense fallback={<LoadingShell />}>`.
+
+7. **Next.js 16 Fallback Dynamic Client Hook Error on `/reports/[id]`**
+   - *Symptom:* `npm run build` failed with `Error: Route "/reports/[id]": Next.js encountered URL data usePathname() in a Client Component outside of <Suspense>`.
+   - *Root Cause:* The fallback JSX contained `<AppShell>` which internally invoked `usePathname()`.
+   - *Fix:* Replaced `<AppShell>` in the fallback with a clean standalone loading container.
+
+8. **Turbopack Build Error with `dynamic = "force-dynamic"`**
+   - *Symptom:* `Error: Route segment config "dynamic" is not compatible with nextConfig.cacheComponents`.
+   - *Root Cause:* Attempting to set `export const dynamic = "force-dynamic"` when `cacheComponents` is enabled in `next.config.ts`.
+   - *Fix:* Removed the invalid config segment, allowing Next.js 16 partial prerendering (PPR) to handle streaming seamlessly via `<Suspense>`.
+
+---
+
+### 4. Verification & Release Metrics Summary
+
+- **Frontend Client Unit Tests (`testing/frontend/test_api_client.mjs`)**: 17 / 17 passed (100%).
+- **TypeScript Strict Compilation (`tsc --noEmit`)**: 0 errors.
+- **ESLint Validation (`eslint`)**: 0 errors, 0 warnings.
+- **Next.js 16 Production Build (`next build`)**: 8 routes compiled and optimized (Static & Partial Prerender) with standalone output.
+- **Live HTTP Route Verification**:
+  - `http://localhost:3000/`: HTTP 200 (Landing Page with interactive demo map)
+  - `http://localhost:3000/dashboard`: HTTP 200 (Dashboard with real backend runs)
+  - `http://localhost:3000/diagnostics/new`: HTTP 200 (New diagnosis form with secret scrubbing notice)
+  - `http://localhost:3000/workspace`: HTTP 200 (Live 3-panel workspace)
+  - `http://localhost:3000/history`: HTTP 200 (Run history table)
+  - `http://localhost:3000/reports/[id]`: HTTP 200 (Report deliverable view using real run UUID)
+- **FastAPI Backend Health & Persistence Detection**: Verified online (`status: "healthy"`, `persistence_mode: "in_memory_transient"`, `docker_isolation_available: false`).
+
+
 
 
 

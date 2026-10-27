@@ -80,4 +80,6 @@ class Repository(Base):
     def __init__(self, **kwargs: Any) -> None:
         kwargs.setdefault("source_type", SourceType.GIT.value)
         kwargs.setdefault("status", RepositoryStatus.REGISTERED.value)
+        kwargs.setdefault("created_at", utc_now())
+        kwargs.setdefault("updated_at", utc_now())
         super().__init__(**kwargs)
