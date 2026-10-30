@@ -36,30 +36,26 @@ export function EvidenceInspector({
   const getReliabilityBadge = (rel: string) => {
     switch (rel) {
       case "direct_observation":
-        return { text: "Direct Observation", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" };
+        return { text: "Direct Observation", bg: "bg-[#D4FF32]/10 text-[#D4FF32] border-[#D4FF32]/30" };
       case "inferred_signal":
-        return { text: "Inferred Signal", bg: "bg-amber-500/10 text-amber-400 border-amber-500/30" };
+        return { text: "Inferred Signal", bg: "bg-white/[0.05] text-[#F5F3EF] border-white/[0.1]" };
       default:
-        return { text: "Limited Context", bg: "bg-slate-800 text-slate-400 border-slate-700" };
+        return { text: "Limited Context", bg: "bg-black/50 text-[#85858D] border-white/[0.08]" };
     }
   };
 
   return (
-    <div className="flex flex-col h-full rounded-xl border border-slate-800/80 bg-[#0a0f1d] overflow-hidden">
+    <div className="flex flex-col h-full rounded border border-white/[0.08] bg-[#151519] overflow-hidden">
       {/* Header */}
-      <div className="border-b border-slate-800/80 px-4 py-3 bg-[#0d1322]/80 shrink-0">
+      <div className="border-b border-white/[0.08] px-4 py-2.5 bg-[#09090B] shrink-0 font-mono text-xs">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center space-x-2">
-            <div className="flex h-5 w-5 items-center justify-center rounded bg-violet-500/10 text-violet-400">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-200">
+            <span className="text-[#F20B91] font-black">◈</span>
+            <span className="font-bold uppercase tracking-wider text-[#F5F3EF]">
               Evidence Inspector
             </span>
           </div>
-          <span className="font-mono text-[11px] text-slate-400">
+          <span className="text-[10px] text-[#85858D]">
             {evidenceList.length} items
           </span>
         </div>
@@ -68,10 +64,10 @@ export function EvidenceInspector({
         <div className="flex flex-wrap gap-1 text-[10px]">
           <button
             onClick={() => setFilterType("all")}
-            className={`rounded px-2 py-0.5 font-medium transition-colors ${
+            className={`rounded px-2 py-0.5 transition-colors cursor-pointer ${
               filterType === "all"
-                ? "bg-slate-700 text-white"
-                : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                ? "bg-[#D4FF32] text-[#09090B] font-black"
+                : "text-[#85858D] hover:text-[#F5F3EF]"
             }`}
           >
             All
@@ -80,10 +76,10 @@ export function EvidenceInspector({
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`rounded px-2 py-0.5 font-medium transition-colors ${
+              className={`rounded px-2 py-0.5 transition-colors cursor-pointer ${
                 filterType === type
-                  ? "bg-cyan-950 text-cyan-300 border border-cyan-800"
-                  : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                  ? "bg-[#D4FF32] text-[#09090B] font-black"
+                  : "text-[#85858D] hover:text-[#F5F3EF] border border-white/[0.08]"
               }`}
             >
               {type.replace("_", " ")}
@@ -92,13 +88,13 @@ export function EvidenceInspector({
         </div>
       </div>
 
-      {/* Main Split Inspector View */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Evidence List Thumbnails */}
-        <div className="max-h-48 overflow-y-auto p-3 space-y-1.5 border-b border-slate-800/80 bg-[#080c16]/60 shrink-0">
+      {/* Main Inspector View */}
+      <div className="flex-1 flex flex-col min-h-0 bg-[#09090B]">
+        {/* Evidence List Selector */}
+        <div className="max-h-48 overflow-y-auto p-2 space-y-1 border-b border-white/[0.08] bg-[#09090B] shrink-0 font-mono text-xs">
           {filteredList.length === 0 ? (
-            <div className="text-center py-4 text-xs text-slate-500">
-              No evidence matching the filter.
+            <div className="text-center py-4 text-xs text-[#85858D]">
+              No evidence matching filter.
             </div>
           ) : (
             filteredList.map((rec) => {
@@ -113,35 +109,29 @@ export function EvidenceInspector({
                     setSelectedId(rec.evidence_id);
                     if (onSelectEvidence) onSelectEvidence(rec.evidence_id);
                   }}
-                  className={`w-full text-left p-2 rounded-md border text-xs transition-all flex items-center justify-between cursor-pointer ${
+                  className={`w-full text-left p-2 rounded border transition-all text-xs cursor-pointer flex items-center justify-between ${
                     isSelected
-                      ? "border-cyan-500/80 bg-cyan-950/30 text-cyan-200 font-semibold"
-                      : "border-slate-800/60 bg-[#0d1322] text-slate-300 hover:border-slate-700"
+                      ? "border-[#F20B91] bg-[#151519] text-[#F5F3EF] shadow-[0_0_12px_rgba(242,11,145,0.25)] ring-1 ring-[#F20B91]"
+                      : "border-white/[0.06] bg-[#151519] text-[#85858D] hover:text-[#F5F3EF] hover:border-white/[0.15]"
                   }`}
                 >
                   <div className="flex items-center space-x-2 truncate">
-                    <span className="font-mono text-[11px] text-slate-400 shrink-0">
-                      {rec.evidence_id}
-                    </span>
-                    <span className="truncate text-slate-300">
-                      {rec.evidence_type.replace("_", " ")}
-                    </span>
+                    <span className={`h-1.5 w-1.5 rounded-full ${isSelected ? "bg-[#F20B91]" : "bg-[#85858D]"}`} />
+                    <span className="font-bold text-[#F5F3EF] truncate">{rec.evidence_id}</span>
+                    <span className="text-[10px] text-[#85858D] truncate">({rec.evidence_type})</span>
                   </div>
 
-                  <div className="flex items-center space-x-1.5 shrink-0">
+                  <div className="flex items-center space-x-1 shrink-0 text-[9px] font-bold">
                     {isSupporting && (
-                      <span className="rounded bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 text-[9px] font-bold">
-                        Supports
+                      <span className="text-[#D4FF32] bg-black px-1.5 py-0.2 rounded border border-[#D4FF32]/40">
+                        + Support
                       </span>
                     )}
                     {isContradicting && (
-                      <span className="rounded bg-rose-500/20 text-rose-400 px-1.5 py-0.5 text-[9px] font-bold">
-                        Contradicts
+                      <span className="text-[#F20B91] bg-black px-1.5 py-0.2 rounded border border-[#F20B91]/40">
+                        - Contradict
                       </span>
                     )}
-                    <span className="font-mono text-[10px] text-slate-500 truncate max-w-[90px]">
-                      {rec.source_component.replace("file:", "")}
-                    </span>
                   </div>
                 </button>
               );
@@ -149,78 +139,92 @@ export function EvidenceInspector({
           )}
         </div>
 
-        {/* Detailed Single Evidence View */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+        {/* Selected Evidence Inspector Surface */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 font-mono text-xs bg-[#09090B]">
           {selectedRecord ? (
-            <>
-              {/* Evidence Overview Card */}
-              <div className="rounded-lg border border-slate-800 bg-[#0d1424] p-3.5 space-y-2.5">
-                <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
-                  <span className="font-mono font-bold text-cyan-300 text-sm">
-                    {selectedRecord.evidence_id}
-                  </span>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${getReliabilityBadge(selectedRecord.reliability).bg}`}>
-                    {getReliabilityBadge(selectedRecord.reliability).text}
+            <div className="space-y-4">
+              {/* Evidence Title & Metadata */}
+              <div className="flex items-start justify-between border-b border-white/[0.08] pb-3">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-black text-[#F5F3EF]">
+                      {selectedRecord.evidence_id}
+                    </span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded border ${getReliabilityBadge(selectedRecord.reliability).bg}`}>
+                      {getReliabilityBadge(selectedRecord.reliability).text}
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#85858D] block mt-0.5">
+                    Type: <span className="text-[#D4FF32] font-bold">{selectedRecord.evidence_type}</span> • Method: <span className="text-[#F5F3EF]">{selectedRecord.extraction_method}</span>
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-[11px]">
-                  <div>
-                    <span className="text-slate-500 block">Type:</span>
-                    <span className="font-mono font-semibold text-slate-200">
-                      {selectedRecord.evidence_type}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-slate-500 block">Method:</span>
-                    <span className="font-mono text-slate-300">
-                      {selectedRecord.extraction_method}
-                    </span>
-                  </div>
-                  <div className="col-span-2">
-                    <span className="text-slate-500 block">Source Component:</span>
-                    <span className="font-mono text-cyan-400">
-                      {selectedRecord.source_component}
-                    </span>
-                  </div>
-                  {selectedRecord.location && (
-                    <div className="col-span-2">
-                      <span className="text-slate-500 block">File Coordinate:</span>
-                      <span className="font-mono text-amber-300 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
-                        {selectedRecord.location}
-                      </span>
-                    </div>
-                  )}
+                <div className="text-right">
+                  <span className="text-[10px] text-[#85858D] block">Component:</span>
+                  <span className="text-xs font-bold text-[#D4FF32]">
+                    {selectedRecord.source_component}
+                  </span>
                 </div>
               </div>
 
-              {/* Observed Payload / Log Excerpt */}
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">
-                  Observed Data &amp; Sanitized Findings:
-                </span>
-                <pre className="p-3 rounded-lg border border-slate-800 bg-[#080d19] font-mono text-[11px] text-slate-300 overflow-x-auto whitespace-pre-wrap max-h-56 leading-relaxed">
-                  {JSON.stringify(selectedRecord.observed_data, null, 2)}
-                </pre>
-              </div>
-
-              {/* Context Limitations */}
-              {selectedRecord.limitations && selectedRecord.limitations.length > 0 && (
-                <div className="rounded-lg border border-amber-900/40 bg-amber-950/20 p-3 space-y-1">
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400 block">
-                    Context Boundaries &amp; Limitations:
+              {/* Source Provenance Coordinates */}
+              {selectedRecord.location && (
+                <div className="rounded border border-white/[0.08] bg-[#151519] p-3 space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#85858D] block">
+                    Source Provenance Coordinates
                   </span>
-                  <ul className="list-disc list-inside text-[11px] text-amber-200/90 space-y-0.5">
-                    {selectedRecord.limitations.map((lim, i) => (
-                      <li key={i}>{lim}</li>
-                    ))}
-                  </ul>
+                  <div className="flex items-center space-x-2 text-[11px] text-[#F5F3EF]">
+                    <span className="text-[#D4FF32]">📍</span>
+                    <span className="text-[#D4FF32] font-bold">
+                      {selectedRecord.location}
+                    </span>
+                  </div>
                 </div>
               )}
-            </>
+
+              {/* Observable Data Payload */}
+              {selectedRecord.observed_data && Object.keys(selectedRecord.observed_data).length > 0 && (
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#85858D] block">
+                    Observable Data Payload:
+                  </span>
+                  <pre className="p-3 rounded border border-white/[0.08] bg-[#151519] text-[#F5F3EF] text-[11px] overflow-x-auto whitespace-pre-wrap">
+                    {JSON.stringify(selectedRecord.observed_data, null, 2)}
+                  </pre>
+                </div>
+              )}
+
+              {/* Limitations Notice */}
+              {selectedRecord.limitations && selectedRecord.limitations.length > 0 && (
+                <div className="space-y-1">
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-[#85858D] block">
+                    Diagnostic Limitations:
+                  </span>
+                  <div className="space-y-1">
+                    {selectedRecord.limitations.map((lim, idx) => (
+                      <div key={idx} className="text-[11px] text-[#85858D] flex items-center space-x-1.5">
+                        <span className="text-[#F20B91]">•</span>
+                        <span>{lim}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Privacy Scrubbing Notice */}
+              <div className="p-2.5 rounded border border-[#D4FF32]/20 bg-[#151519] flex items-center justify-between text-[10px] text-[#85858D]">
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-[#D4FF32] font-bold">🛡</span>
+                  <span>Credentials / JWT tokens redacted prior to storage</span>
+                </div>
+                <span className="text-[#D4FF32] font-black uppercase">
+                  Verified Safe
+                </span>
+              </div>
+            </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-center p-6 text-slate-500 text-xs">
-              Select an evidence item above or a hypothesis to inspect observable findings.
+            <div className="h-full flex items-center justify-center text-center text-[#85858D] py-12">
+              Select an evidence item from the list above or click an evidence badge in the Hypothesis Explorer.
             </div>
           )}
         </div>

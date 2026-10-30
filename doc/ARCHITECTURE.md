@@ -214,23 +214,20 @@ The database architecture is designed for operational resilience, strict type en
 
 The frontend is a bespoke, production-grade Next.js 16 / React 19 web application engineered to transform dense diagnostic and architectural graphs into an intuitive, evidence-driven investigation experience.
 
-### 5.1 Design Philosophy & Visual Identity (Yukai Du Inspiration)
+### 5.1 Design Philosophy, Foundations & Purposeful Motion
 
-The user interface draws inspiration from the design philosophy of Yukai Du's illustration portfolio, prioritizing:
-- **Visual Identity First**: A recognizable engineering palette anchored on a deep navy/charcoal foundation (`#070a12`, `#0a0f1d`, `#0d1424`), hairline borders (`border-slate-800/80`), and high-contrast typography.
-- **Content Does the Talking**: System dependency maps, empirical evidence records, and ranked causal hypotheses take center stage over decorative clutter.
-- **Clean, Airy Layouts**: Generous spacing, distinct panel division, and clear visual hierarchy without monolithic, generic cards.
-- **Purposeful Motion**: Subtle animations communicate live system telemetry and dependency relationships:
-  - `@keyframes flow-edge`: Flowing dashes on SVG bezier dependency edges showing causal direction.
-  - `@keyframes pulse-node`: Pulsating glow on defective or active components.
-  - Smooth micro-interactions on hover and selection without jarring layout shifts.
-- **Minimal Typography**: Monospace fonts (`JetBrains Mono` / `ui-monospace`) for code coordinates, hashes, and evidence IDs; clean geometric sans-serif for diagnostic rationales.
-- **Color Signifiers**:
-  - `Electric Cyan` (`#22d3ee`): System navigation, primary actions, and dependency links.
-  - `Violet / Indigo` (`#a78bfa`): Diagnostic probes and verification plans.
-  - `Emerald` (`#34d399`): Analyzed healthy components, direct evidence, and verified outcomes.
-  - `Amber` (`#fbbf24`): Unresolved dependencies and uncertain hypotheses.
-  - `Rose` (`#f87171`): Syntax faults, contradictory evidence, and execution errors.
+ORACLE's user interface is engineered around the core philosophy:
+> *"Every technical failure leaves evidence. ORACLE follows that evidence."*
+
+Rather than relying on generic AI dashboard aesthetics (cyan glowing borders around every card, repetitive rounded rectangles, decorative blobs), the system employs a disciplined, cinematic engineering design language:
+
+- **Foundation & Surfaces**: Jet Black (`#09090B`) dominant foundation, Deep Charcoal (`#151519`) tactical surfaces, and fine neutral hairlines (`border-white/[0.08]`) with coordinate grid patterns.
+- **Bold Visual Identity & Dominant Color Triad**:
+  - **Jet Black (`#09090B`)**: Dominant technical backdrop and canvas foundation.
+  - **Hot Pink (`#F20B91`)**: Primary actions, localized critical faults, active selection halos, and high-impact editorial accents.
+  - **Chartreuse (`#D4FF32`)**: Secondary technical highlights, active AST dependency paths, verification achievements, and key data coordinates.
+  - **Supporting Colors**: Warm White (`#F5F3EF`) for primary typography, Muted Gray (`#85858D`) for secondary metadata and inactive dependency paths, and Deep Charcoal (`#151519`) for container panels.
+- **Pure CSS & SVG Motion Architecture**: Zero heavy JavaScript animation dependencies (ensuring peak performance and React 19 compatibility). Custom keyframes include `flow-edge` (animated dependency lines with Chartreuse particles), `fault-glitch` (Hot Pink fault flashes), `pulse-node`, `radar-sweep`, `breathe-pink`, and `breathe-chartreuse`, with full `@media (prefers-reduced-motion: reduce)` accessibility compliance.
 
 ### 5.2 Application Route Architecture (Next.js 16 App Router)
 
@@ -238,42 +235,44 @@ The frontend organizes features across six dedicated application routes:
 
 ```
 frontend/src/app/
-├── layout.tsx                  # Root layout, dark background (#070a12), metadata, viewport
-├── globals.css                 # Theme variables, custom thin scrollbars, animations
-├── page.tsx                    # Route / (Landing Page & Hero Centerpiece)
+├── layout.tsx                  # Root layout, dark foundation (#06080d), metadata, viewport
+├── globals.css                 # Theme tokens, custom scrollbars, SVG animations, grid patterns
+├── page.tsx                    # Route / (Cinematic Hero with 9-stage sequence & 5-stage scroll story)
 ├── dashboard/
-│   └── page.tsx                # Route /dashboard (Target workspace selector & recent runs)
+│   └── page.tsx                # Route /dashboard (Engineering Operations Console & telemetry state)
 ├── diagnostics/
 │   └── new/
-│       └── page.tsx            # Route /diagnostics/new (Ingestion & telemetry form)
+│       └── page.tsx            # Route /diagnostics/new (Investigation Dispatch Terminal)
 ├── workspace/
-│   └── page.tsx                # Route /workspace (Live 3-panel diagnostic workspace)
+│   └── page.tsx                # Route /workspace (Living 3-Panel Investigation Room)
 ├── history/
-│   └── page.tsx                # Route /history (Searchable diagnostic runs table)
+│   └── page.tsx                # Route /history (Diagnostic Run History Timeline)
 └── reports/
     └── [id]/
-        └── page.tsx            # Route /reports/[id] (Diagnostic deliverable report view)
+        └── page.tsx            # Route /reports/[id] (Editorial Deliverable Report view)
 ```
 
-- **Landing Page (`/`)**: Hero headline ("Find the fault. Follow the evidence."), an interactive dependency map centerpiece demonstrating real-time node inspection, 3 core capability cards, a 5-step workflow sequence (`Ingest → Map → Investigate → Verify → Report`), and an engineering footer.
-- **Main Dashboard (`/dashboard`)**: Persistent status indicator, target workspace selector, prominent New Diagnosis CTA, recent diagnostic runs retrieved from the live backend, run status badges, and helpful empty state.
-- **New Diagnosis Workspace (`/diagnostics/new`)**: Repository ingestion format selector (`file:///` local directory, `https://` remote git), path validation, telemetry inputs (symptom description, stack trace with automated secret scrubbing notice), and dynamic container execution confirmation modal.
-- **Live Diagnostic Workspace (`/workspace`)**: The primary diagnostic command center featuring a 3-panel synchronized layout.
-- **Run History (`/history`)**: Searchable, filterable audit trail of past diagnostic runs with direct navigation to the workspace or report views.
-- **Diagnostic Report View (`/reports/[id]`)**: Polished final deliverable view wrapped in a `<Suspense>` boundary, rendering executive summary, explicit diagnostic status labels, verified outcomes, and remediation guidance.
+- **Landing Page (`/`)**: Full-viewport cinematic hero with oversized typography, interactive 9-stage animated investigation environment, and a 5-stage scroll-based product narrative (`Understand the System` → `Investigate the Failure` → `Connect the Evidence` → `Determine What to Check Next` → `Deliver the Diagnosis`).
+- **Engineering Operations Console (`/dashboard`)**: Operations console with target repository selector, live runtime telemetry state cards (FastAPI gateway, durable/transient persistence, safe container isolation), recent diagnostic runs grid with primary causal findings, and purposeful empty states.
+- **Investigation Dispatch Terminal (`/diagnostics/new`)**: Target registration with real-time URI validation, runtime telemetry stack trace input with automated secret scrubbing notice, dynamic execution security policy, and multi-stage submission feedback.
+- **Living Investigation Room (`/workspace`)**: The primary diagnostic command center featuring a 3-panel synchronized layout with deep bidirectional highlighting.
+- **Diagnostic Run History Timeline (`/history`)**: Searchable, filterable audit trail of past diagnostic runs with direct navigation to the workspace or report views.
+- **Editorial Deliverable Report (`/reports/[id]`)**: High-craft editorial engineering document wrapped in `<Suspense>`, rendering executive summary, explicit diagnostic status labels, verified outcomes, and remaining uncertainty disclosure.
 
 ### 5.3 Core Component Architecture
 
 ```
 frontend/src/components/
-├── AppShell.tsx                        # Persistent brand navbar, target context & live backend status
-├── InteractiveSystemMap.tsx            # Interactive SVG & grid dependency map with inspector drawer
-├── EvidenceToHypothesisExplorer.tsx    # Signature interaction: hypothesis card list with provenance links
-├── EvidenceInspector.tsx               # Deep evidence inspection drawer with category filtering
-├── DiagnosticWorkspace.tsx             # 3-panel split layout with tablet/mobile tab switcher
-├── DiagnosticReportView.tsx            # Final deliverable view with explicit status badges
-├── NewDiagnosisForm.tsx                # Target configuration, telemetry scrubbing & dynamic gating
-└── RunHistoryTable.tsx                 # Searchable, filterable history table
+├── AppShell.tsx                        # Sleek engineering console frame, target context & live backend status
+├── CinematicHero.tsx                   # Signature 9-stage animated interactive technical environment
+├── ScrollStoryNarrative.tsx            # 5-stage editorial scroll-based investigation story
+├── InteractiveSystemMap.tsx            # Topological SVG dependency map with flowing particles & matrix view
+├── EvidenceToHypothesisExplorer.tsx    # Investigation board with ranked hypotheses, entropy & provenance
+├── EvidenceInspector.tsx               # Monospaced evidence reader with reliability & coordinate filters
+├── DiagnosticWorkspace.tsx             # Living 3-panel split layout with tablet/mobile tab switcher
+├── DiagnosticReportView.tsx            # Editorial deliverable view with explicit status badges
+├── NewDiagnosisForm.tsx                # Investigation dispatch terminal with telemetry scrubbing & gating
+└── RunHistoryTable.tsx                 # Searchable, filterable history timeline
 ```
 
 #### 1. `AppShell` (`frontend/src/components/AppShell.tsx`)
@@ -1390,6 +1389,127 @@ The prototype includes a single automated demonstration runner (`testing/demonst
 2. Supported syntax defect repository (precise AST localization, provenance tracking).
 3. Runtime telemetry non-static fault (database socket timeout diagnosis, 100% secret redaction).
 4. Ambiguous / unsupported repository (explicit abstention with bounded uncertainty).
+
+---
+
+## 23. Containerized Deployment Topology & Persistence Verification (Implementation 021)
+
+### 23.1 Multi-Tier Container Architecture
+ORACLE deploys as a three-tier containerized topology configured via `deploy/docker-compose.yml`:
+1. **`oracle-db` (PostgreSQL 16 Alpine)**:
+   - Data stored on persistent named volume `oracle_pgdata:/var/lib/postgresql/data`.
+   - Isolated on private, non-routable internal bridge network (`oracle_internal`, `internal: true`).
+   - Healthcheck: `pg_isready -U oracle_user -d oracle_db`.
+   - Host port bound exclusively to localhost `127.0.0.1:5432:5432` for administrative access.
+2. **`oracle-backend` (FastAPI Polyglot Monolith)**:
+   - Built from `deploy/Dockerfile.backend` (context: repository root).
+   - Bundles Python 3.12, Node.js + TypeScript Compiler API, and OpenJDK 17 + precompiled `JavaAstWorker.class`.
+   - Copies `backend/oracle` and `ml` packages, providing full fault taxonomy, feature extraction, and ML ranking models.
+   - Executes as unprivileged user `oracle` (UID 10001, GID 10001).
+   - Dual-homed on `oracle_internal` and `oracle_external`.
+   - Startup synchronized via `depends_on: db: condition: service_healthy` and `entrypoint-backend.sh` migration execution (`alembic upgrade head`).
+3. **`oracle-frontend` (Next.js 16 Standalone Container)**:
+   - Built from `deploy/Dockerfile.frontend` using Node 20 Alpine multi-stage build.
+   - Produces minimal standalone runner image using Next.js standalone output (`node server.js`).
+   - Executes as unprivileged user `nextjs` (UID 1001, GID 1001).
+   - Connected to `oracle_external` network, exposing `127.0.0.1:3000:3000`.
+
+### 23.2 Dynamic Diagnostic Execution Isolation Invariants
+When containerized dynamic verification is enabled (`allow_dynamic: true`):
+- Dynamic worker executes target code strictly inside ephemeral containers (`--rm`) with `--read-only` root filesystem.
+- Linux capabilities are dropped (`--cap-drop ALL`), and setuid privilege escalation is prohibited (`--security-opt no-new-privileges`).
+- Source repository code is mounted strictly read-only (`:ro`).
+- Network access is disabled by default (`--network none`).
+- Dynamic execution is gated by `check_isolation_preflight()`. If Docker daemon is absent, the worker halts with `ISOLATION_UNAVAILABLE` and never falls back to host execution.
+- Only approved workload profiles (`WORKLOAD_PROFILES`) can be executed; arbitrary command/shell interpolation is prohibited.
+
+---
+
+## 24. Cloud VM Deployment, Durable Persistence & Runtime Isolation (Implementation 022)
+
+### 24.1 Cloud Virtual Machine Target Topology
+For verified containerized deployment, ORACLE targets a dedicated Linux Cloud Virtual Machine (Ubuntu 22.04 LTS or 24.04 LTS) running Docker Engine 26+ and Docker Compose v2.
+
+```
+[ Internet / External Clients ]
+               │
+               │ HTTPS (443) / HTTP (3000)
+               ▼
+┌────────────────────────────────────────────────────────┐
+│ Cloud VM (Ubuntu 22.04 / 24.04 LTS)                    │
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Host Firewall (UFW)                              │  │
+│  │ Inbound Allowed: 22 (SSH), 3000 (UI), 8000 (API) │  │
+│  │ Inbound Blocked: 5432 (PostgreSQL Engine)        │  │
+│  └───────────┬──────────────────────────┬───────────┘  │
+│              │                          │              │
+│              ▼                          ▼              │
+│   ┌────────────────────┐     ┌─────────────────────┐   │
+│   │  oracle-frontend   │     │   oracle-backend    │   │
+│   │  (Next.js 16)      │────▶│   (FastAPI Engine)  │   │
+│   │  Port 3000         │HTTP │   Port 8000         │   │
+│   └────────────────────┘     └──────────┬──────────┘   │
+│                                         │              │
+│                      oracle_internal    │ (SQLAlchemy) │
+│                      Bridge Network     ▼              │
+│                              ┌─────────────────────┐   │
+│                              │      oracle-db      │   │
+│                              │  (PostgreSQL 16)    │   │
+│                              │  Port 5432 (Internal│   │
+│                              └──────────┬──────────┘   │
+│                                         │              │
+│                                         ▼              │
+│                              ┌─────────────────────┐   │
+│                              │ Named Docker Volume │   │
+│                              │    oracle_pgdata    │   │
+│                              └─────────────────────┘   │
+│                                                        │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Dynamic Execution Sandboxing (Docker Engine)     │  │
+│  │ Isolated container workers with:                 │  │
+│  │ --read-only, --cap-drop ALL, --network none,     │  │
+│  │ --security-opt no-new-privileges, -m 256m        │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+```
+
+### 24.2 Automated Provisioning (`deploy/scripts/setup_ubuntu_vm.sh`)
+An idempotent Bash automation script provisions the cloud VM in one command:
+1. Validates host operating system is Ubuntu 22.04 or 24.04 LTS.
+2. Checks available RAM; initializes a 2 GB swapfile if total RAM is under 6 GB to prevent out-of-memory errors during standalone Next.js compilation.
+3. Installs prerequisites and configures the official Docker apt repository.
+4. Installs Docker Engine, `containerd.io`, and Docker Compose plugin.
+5. Configures UFW firewall rules: allows ports 22, 3000, 8000; blocks port 5432 externally.
+6. Generates a 48-character cryptographic database password via `openssl rand -hex 24` and writes `deploy/.env`.
+7. Builds and launches the stack via `docker compose -f deploy/docker-compose.yml up -d --build`.
+8. Polls health endpoints (`/api/v1/health` and `/api/v1/status`) until services report healthy.
+
+### 24.3 11-Step Durable Persistence Lifecycle Verification (`deploy/scripts/verify_persistence.py`)
+Validates that database records persist across the complete container lifecycle:
+1. Initial status check confirming `persistence_mode: durable_postgresql` and `database.connected: true`.
+2. Alembic migration verification asserting `002_create_diagnostic_runs` is applied.
+3. Registration of a test repository via `POST /api/v1/repositories`.
+4. Diagnostic workflow execution creating persistent run records, hypotheses, and evidence.
+5. Backend container restart (`docker compose restart backend`) with health recovery polling.
+6. Verification that repository and diagnostic run records survive backend restart.
+7. Database container restart (`docker compose restart db`) with connection recovery polling.
+8. Verification that diagnostic run records and reports survive PostgreSQL restart.
+9. Complete stack teardown and re-creation (`docker compose down` then `up -d`).
+10. Verification of idempotent Alembic migration re-run without errors.
+11. Final data integrity assertion confirming named volume `oracle_pgdata` preserved records intact.
+
+### 24.4 Runtime Dynamic Execution Isolation Audit (`deploy/scripts/verify_isolation.sh`)
+Validates container sandboxing security boundaries:
+1. Python preflight probe verifying `is_available: true` and all 8 security capabilities.
+2. Root filesystem write denial under `--read-only`.
+3. Source repository mount write denial under `-v :ro`.
+4. Ephemeral `/tmp` scratch space write success.
+5. Outbound network communication denial under `--network none`.
+6. Capability dropping under `--cap-drop ALL`.
+7. Privilege escalation prevention under `--security-opt no-new-privileges`.
+8. Memory (256 MB) and CPU resource constraints enforcement.
+9. Strict host Docker daemon socket protection (verifying `/var/run/docker.sock` is never mounted).
 
 
 

@@ -37,7 +37,7 @@ export function NewDiagnosisForm({
   const [allowDynamic, setAllowDynamic] = useState<boolean>(false);
   const [showTelemetry, setShowTelemetry] = useState<boolean>(false);
 
-  // State
+  // State & Multi-stage submission feedback
   const [loading, setLoading] = useState<boolean>(false);
   const [progressStage, setProgressStage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -53,9 +53,9 @@ export function NewDiagnosisForm({
 
       if (mode === "new") {
         if (!repoName.trim() || !repoUrl.trim()) {
-          throw new Error("Repository display name and URL path are required.");
+          throw new Error("Repository display name and URI location are required.");
         }
-        setProgressStage("Registering repository metadata & validating URI scheme...");
+        setProgressStage("Validating URI scheme and registering target repository...");
         const newRepo = await registerRepository({
           name: repoName.trim(),
           url: repoUrl.trim(),
@@ -68,14 +68,14 @@ export function NewDiagnosisForm({
         throw new Error("Please select or register a repository target.");
       }
 
-      setProgressStage("Executing polyglot static inspection & hypothesis synthesis...");
+      setProgressStage("Executing polyglot static inspection & AST dependency mapping...");
       const report = await startDiagnosticRun(targetId, {
         allow_dynamic: allowDynamic,
         symptom_description: symptomText.trim() || undefined,
         runtime_traceback: tracebackText.trim() || undefined,
       });
 
-      setProgressStage("Diagnosis completed successfully.");
+      setProgressStage("Investigation complete. Opening diagnostic workspace...");
       if (onDiagnosisComplete) {
         onDiagnosisComplete(report);
       }
@@ -83,112 +83,113 @@ export function NewDiagnosisForm({
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to execute diagnostic run.";
       setErrorMessage(msg);
-    } finally {
       setLoading(false);
       setProgressStage(null);
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto rounded-xl border border-slate-800/80 bg-[#0d1424] p-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-bold text-slate-100 tracking-tight">
-          Start Diagnostic Investigation
-        </h1>
-        <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-          ORACLE inspects source code, dependencies, and runtime symptoms to identify root causes and plan discriminatory probes without executing uncontained code on the host.
+    <div className="max-w-3xl mx-auto rounded border border-white/[0.08] bg-[#151519] p-6 sm:p-8 space-y-6">
+      {/* Terminal Title & Invariants */}
+      <div className="border-b border-white/[0.08] pb-4 space-y-1.5">
+        <div className="flex items-center space-x-2">
+          <span className="h-2 w-2 rounded-full bg-[#D4FF32]" />
+          <h1 className="text-xl font-black text-[#F5F3EF] tracking-tight font-mono uppercase">
+            Diagnostic Investigation Launcher
+          </h1>
+        </div>
+        <p className="text-xs text-[#85858D] font-mono leading-relaxed">
+          Configure a diagnostic investigation against a local directory or remote Git repository. Ingestion invokes pure read-only AST parsers and secret-scrubbed telemetry analysis.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Target Mode Selector */}
-        <div className="flex rounded-lg border border-slate-800 bg-[#080d19] p-1 text-xs">
+      <form onSubmit={handleSubmit} className="space-y-6 text-xs font-mono">
+        {/* Mode Selector Tabs */}
+        <div className="flex items-center rounded border border-white/[0.08] bg-[#09090B] p-1 text-xs">
           <button
             type="button"
             onClick={() => setMode("existing")}
             disabled={existingRepositories.length === 0}
-            className={`flex-1 py-2 rounded-md font-semibold transition-colors ${
+            className={`flex-1 py-2 rounded text-center transition-colors cursor-pointer ${
               mode === "existing"
-                ? "bg-cyan-500 text-slate-950 shadow-sm"
-                : "text-slate-400 hover:text-slate-200 disabled:opacity-40"
+                ? "bg-[#D4FF32] text-[#09090B] font-black"
+                : "text-[#85858D] hover:text-[#F5F3EF] disabled:opacity-30 disabled:cursor-not-allowed"
             }`}
           >
-            Registered Target ({existingRepositories.length})
+            Select Existing Target ({existingRepositories.length})
           </button>
           <button
             type="button"
             onClick={() => setMode("new")}
-            className={`flex-1 py-2 rounded-md font-semibold transition-colors ${
+            className={`flex-1 py-2 rounded text-center transition-colors cursor-pointer ${
               mode === "new"
-                ? "bg-cyan-500 text-slate-950 shadow-sm"
-                : "text-slate-400 hover:text-slate-200"
+                ? "bg-[#D4FF32] text-[#09090B] font-black"
+                : "text-[#85858D] hover:text-[#F5F3EF]"
             }`}
           >
-            + Register New Target
+            + Register New Codebase Target
           </button>
         </div>
 
-        {/* Existing Repo Select */}
+        {/* Existing Target Dropdown */}
         {mode === "existing" && (
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-slate-300 block">
-              Select Target Repository:
+            <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+              Registered Target Repository
             </label>
             <select
               value={selectedRepoId}
               onChange={(e) => setSelectedRepoId(e.target.value)}
-              className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2.5 text-xs text-slate-200 focus:border-cyan-500 focus:outline-none font-mono"
+              className="w-full rounded border border-white/[0.08] bg-[#09090B] px-3.5 py-2.5 text-[#F5F3EF] focus:border-[#F20B91] focus:outline-none"
             >
               {existingRepositories.map((repo) => (
-                <option key={repo.id} value={repo.id}>
-                  {repo.name} ({repo.url})
+                <option key={repo.id} value={repo.id} className="bg-[#151519] text-[#F5F3EF]">
+                  {repo.name} — {repo.url} ({repo.source_type})
                 </option>
               ))}
             </select>
           </div>
         )}
 
-        {/* New Repo Form */}
+        {/* New Target Registration Fields */}
         {mode === "new" && (
-          <div className="space-y-4 rounded-lg border border-slate-800/80 bg-[#0a0f1d] p-4">
+          <div className="space-y-4 rounded border border-white/[0.08] bg-[#09090B] p-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 block">
-                Target Display Name:
+              <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+                Target Display Name
               </label>
               <input
                 type="text"
-                required
-                placeholder="e.g. auth-service-production"
+                placeholder="e.g. Orders Microservice"
                 value={repoName}
                 onChange={(e) => setRepoName(e.target.value)}
-                className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded border border-white/[0.08] bg-[#151519] px-3.5 py-2 text-[#F5F3EF] placeholder-[#85858D] focus:border-[#F20B91] focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-slate-300">
-                  Repository Location URI:
+                <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+                  Target URI Scheme
                 </label>
-                <span className="text-[10px] text-slate-500 font-mono">
-                  file:// or https:// scheme required
+                <span className="text-[10px] text-[#85858D]">
+                  Use <code className="text-[#D4FF32]">file:///...</code> for local directories
                 </span>
               </div>
               <input
                 type="text"
-                required
-                placeholder="file:///path/to/local/repo or https://github.com/org/repo.git"
+                placeholder="file:///c:/path/to/project or https://github.com/org/repo.git"
                 value={repoUrl}
                 onChange={(e) => setRepoUrl(e.target.value)}
-                className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none font-mono"
+                className="w-full rounded border border-white/[0.08] bg-[#151519] px-3.5 py-2 text-[#F5F3EF] placeholder-[#85858D] focus:border-[#F20B91] focus:outline-none"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-300 block">
-                Source VCS Layout:
+              <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+                Source Type
               </label>
-              <div className="flex gap-4 text-xs text-slate-300">
+              <div className="flex items-center space-x-4 text-xs text-[#85858D]">
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
@@ -196,9 +197,9 @@ export function NewDiagnosisForm({
                     value="local_directory"
                     checked={sourceType === "local_directory"}
                     onChange={() => setSourceType("local_directory")}
-                    className="text-cyan-500 focus:ring-cyan-500"
+                    className="accent-[#F20B91]"
                   />
-                  <span>Local Directory (`file://`)</span>
+                  <span className="text-[#F5F3EF]">Local Directory (Absolute Path)</span>
                 </label>
                 <label className="flex items-center space-x-2 cursor-pointer">
                   <input
@@ -207,124 +208,123 @@ export function NewDiagnosisForm({
                     value="git"
                     checked={sourceType === "git"}
                     onChange={() => setSourceType("git")}
-                    className="text-cyan-500 focus:ring-cyan-500"
+                    className="accent-[#F20B91]"
                   />
-                  <span>Remote Git (`https://`)</span>
+                  <span className="text-[#F5F3EF]">Git Repository</span>
                 </label>
               </div>
-            </div>
-
-            {/* Input Format Help Box */}
-            <div className="rounded-lg border border-slate-800 bg-[#080d19] p-3 text-[11px] text-slate-400 space-y-1">
-              <span className="font-semibold text-slate-300 block">Supported Ecosystems &amp; Manifests:</span>
-              <p>• Python (`pyproject.toml`, `requirements.txt`)</p>
-              <p>• TypeScript &amp; JavaScript (`package.json`, `tsconfig.json`)</p>
-              <p>• Java (`pom.xml`, `build.gradle`)</p>
-              <p>• Go (`go.mod`)</p>
             </div>
           </div>
         )}
 
-        {/* Runtime Telemetry (Collapsible) */}
-        <div className="rounded-lg border border-slate-800/80 bg-[#0a0f1d] overflow-hidden">
-          <button
-            type="button"
-            onClick={() => setShowTelemetry(!showTelemetry)}
-            className="w-full flex items-center justify-between p-4 text-xs font-semibold text-slate-200 hover:bg-slate-800/30 transition-colors text-left"
-          >
-            <div className="flex items-center space-x-2">
-              <svg className="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <span>Optional: Runtime Telemetry &amp; Stack Trace</span>
+        {/* Runtime Telemetry Input (Collapsible) */}
+        <div className="rounded border border-white/[0.08] bg-[#09090B] p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="space-y-0.5">
+              <span className="font-bold text-[#F5F3EF] block">
+                Runtime Error Telemetry &amp; Stack Traces
+              </span>
+              <span className="text-[11px] text-[#85858D]">
+                Provide runtime error messages to correlate stack frames with static AST nodes.
+              </span>
             </div>
-            <span className="text-[11px] text-cyan-400 font-mono">
-              {showTelemetry ? "Collapse ▲" : "Add Error Logs ▼"}
-            </span>
-          </button>
+            <button
+              type="button"
+              onClick={() => setShowTelemetry(!showTelemetry)}
+              className="text-xs text-[#D4FF32] hover:underline cursor-pointer font-bold"
+            >
+              {showTelemetry ? "Hide Telemetry" : "+ Attach Traceback"}
+            </button>
+          </div>
 
           {showTelemetry && (
-            <div className="p-4 pt-0 space-y-4 border-t border-slate-800/60 mt-1">
-              <div className="rounded border border-emerald-500/20 bg-emerald-950/20 px-3 py-1.5 text-[11px] text-emerald-300 flex items-center space-x-1.5">
-                <span>🛡</span>
-                <span>Automated Secret Redaction Active: Passwords, tokens, and keys are automatically scrubbed.</span>
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 block">
-                  Observed Symptom Description:
+            <div className="space-y-3 pt-2">
+              <div className="space-y-1">
+                <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+                  Observed Symptom Description
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Database connection timed out after 5000ms during login query"
+                  placeholder="e.g. Internal Server Error 500 on POST /auth/login"
                   value={symptomText}
                   onChange={(e) => setSymptomText(e.target.value)}
-                  className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none"
+                  className="w-full rounded border border-white/[0.08] bg-[#151519] px-3.5 py-2 text-[#F5F3EF] placeholder-[#85858D] focus:border-[#F20B91] focus:outline-none"
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 block">
-                  Runtime Stack Trace / Traceback Excerpt:
-                </label>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] text-[#85858D] uppercase font-bold tracking-wider block">
+                    Raw Traceback / Log Excerpt
+                  </label>
+                  <span className="text-[10px] text-[#D4FF32] flex items-center space-x-1 font-bold">
+                    <span>🛡 Secret Redaction Active</span>
+                  </span>
+                </div>
                 <textarea
                   rows={4}
-                  placeholder="Paste Python, Node, Java, or Go panic traceback here..."
+                  placeholder="Paste Python traceback, Node.js TypeError, or Java Exception..."
                   value={tracebackText}
                   onChange={(e) => setTracebackText(e.target.value)}
-                  className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2 text-xs text-slate-200 placeholder-slate-600 focus:border-cyan-500 focus:outline-none font-mono"
+                  className="w-full rounded border border-white/[0.08] bg-[#151519] p-3 text-[11px] text-[#F5F3EF] placeholder-[#85858D] focus:border-[#F20B91] focus:outline-none"
                 />
               </div>
             </div>
           )}
         </div>
 
-        {/* Dynamic Execution Policy Toggle */}
-        <div className="rounded-lg border border-slate-800 bg-[#0a0f1d] p-4 text-xs space-y-2">
-          <label className="flex items-start space-x-3 cursor-pointer">
+        {/* Security / Dynamic Execution Gating Toggle */}
+        <div className="rounded border border-white/[0.08] bg-[#09090B] p-4 flex items-start justify-between gap-4">
+          <div className="space-y-1">
+            <span className="font-bold text-[#F5F3EF] block">
+              Containerized Dynamic Probe Execution
+            </span>
+            <p className="text-[11px] text-[#85858D] leading-relaxed">
+              When enabled, probes are dispatched into isolated, ephemeral Docker containers with dropped capabilities. If Docker daemon is unavailable, ORACLE safely falls back to pure read-only AST inspection.
+            </p>
+          </div>
+
+          <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
             <input
               type="checkbox"
               checked={allowDynamic}
               onChange={(e) => setAllowDynamic(e.target.checked)}
-              className="mt-0.5 rounded border-slate-700 bg-slate-900 text-cyan-500 focus:ring-cyan-500"
+              className="sr-only peer"
             />
-            <div className="space-y-0.5">
-              <span className="font-semibold text-slate-200 block">
-                Allow Containerized Dynamic Verification (if Docker available)
-              </span>
-              <p className="text-[11px] text-slate-400">
-                Arbitrary host execution is prohibited. When enabled, probes run inside isolated Docker containers with dropped Linux capabilities. If Docker is absent, dynamic probes are safely skipped.
-              </p>
-            </div>
+            <div className="w-9 h-5 bg-[#151519] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#F20B91]"></div>
           </label>
         </div>
 
-        {/* Error Banner */}
+        {/* Error Feedback */}
         {errorMessage && (
-          <div className="rounded-lg border border-rose-500/40 bg-rose-950/30 p-3.5 text-xs text-rose-200 flex items-start space-x-2">
-            <span className="text-rose-400 font-bold shrink-0">✕</span>
+          <div className="rounded border border-[#F20B91]/40 bg-black/60 p-3 text-xs text-[#F20B91] flex items-center space-x-2 font-bold">
+            <span>⚠ Error:</span>
             <span>{errorMessage}</span>
           </div>
         )}
 
-        {/* Action Button */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full flex items-center justify-center space-x-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-5 py-3 text-xs transition-all shadow-md shadow-cyan-500/20 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
-        >
-          {loading ? (
-            <>
-              <svg className="animate-spin h-4 w-4 text-slate-950" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-              <span>{progressStage || "Investigating Target..."}</span>
-            </>
-          ) : (
-            <span>Run Diagnostic Investigation →</span>
-          )}
-        </button>
+        {/* Multi-Stage Submission Progress Ticker */}
+        {loading && progressStage && (
+          <div className="rounded border border-[#D4FF32]/40 bg-black/60 p-3 space-y-1.5 font-mono text-xs">
+            <div className="flex items-center space-x-2 text-[#D4FF32]">
+              <span className="h-2 w-2 rounded-full bg-[#D4FF32] animate-pulse" />
+              <span className="font-black uppercase tracking-wider text-[10px]">DIAGNOSTIC PIPELINE DISPATCHED</span>
+            </div>
+            <p className="text-[#F5F3EF] text-[11px]">{progressStage}</p>
+          </div>
+        )}
+
+        {/* Submit Action */}
+        <div className="pt-2">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full flex items-center justify-center space-x-2 rounded bg-[#F20B91] hover:bg-[#d60a80] text-[#09090B] font-black py-3 text-xs tracking-wider transition-all shadow-[0_0_20px_rgba(242,11,145,0.35)] active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+          >
+            <span>{loading ? "ANALYZING TARGET..." : "DISPATCH INVESTIGATION ENGINE"}</span>
+            <span className="text-sm">→</span>
+          </button>
+        </div>
       </form>
     </div>
   );

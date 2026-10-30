@@ -1,6 +1,6 @@
 # ORACLE Diagnostic Reliability & Real-World Validation Report
 
-**Generated:** 2026-10-27T00:06:13.976309+00:00  
+**Generated:** 2026-10-30T05:34:26.621214+00:00  
 **Benchmark Version:** 1.0.0  
 **Taxonomy Version:** 1.0.0  
 **Total Scenarios Evaluated:** 60  
@@ -21,7 +21,7 @@
 | **Unsafe Probe Rejection** | N/A (no probes) | **100.0% (4/4)** | **100.0% (zero host fallback)** |
 | **Repeated Probes Prevented** | N/A (1-shot) | **100.0% (60/60)** | **100.0% (deduplicated loop)** |
 | **Mean Investigation Iterations** | 1.0 | **1.47** | Adaptive bounded planning |
-| **Total Execution Duration** | 78846.5ms | **77497.4ms** | Across all 60 projects |
+| **Total Execution Duration** | 50130.6ms | **52865.2ms** | Across all 60 projects |
 
 ---
 

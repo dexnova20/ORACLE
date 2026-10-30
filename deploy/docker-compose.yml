@@ -63,13 +63,13 @@ services:
       WAIT_FOR_DB: "true"
       RUN_MIGRATIONS: "true"
       DB_CONNECT_TIMEOUT: "30"
-      CORS_ORIGINS: '["http://localhost:3000","http://127.0.0.1:3000"]'
-      PERMITTED_LOCAL_ROOTS: '["/tmp/snapshots"]'
+      CORS_ORIGINS: ${CORS_ORIGINS:-'["http://localhost:3000","http://127.0.0.1:3000"]'}
+      PERMITTED_LOCAL_ROOTS: ${PERMITTED_LOCAL_ROOTS:-'["/tmp/snapshots"]'}
     networks:
       - oracle_internal
       - oracle_external
     ports:
-      - "127.0.0.1:8000:8000"
+      - "${HOST_BIND_IP:-127.0.0.1}:8000:8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 15s
@@ -100,7 +100,7 @@ services:
     networks:
       - oracle_external
     ports:
-      - "127.0.0.1:3000:3000"
+      - "${HOST_BIND_IP:-127.0.0.1}:3000:3000"
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
       interval: 15s

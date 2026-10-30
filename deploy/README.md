@@ -51,14 +51,28 @@ deploy/
 ├── docker-compose.yml      # Service orchestration & internal networking
 ├── entrypoint-backend.sh   # DB readiness wait & automated Alembic migration runner
 ├── .env.example            # Environment configuration template
-└── README.md               # Operational runbook (this document)
+├── README.md               # Operational runbook (this document)
+├── docs/
+│   └── cloud_vm_deployment_guide.md  # Comprehensive Cloud VM deployment and sizing guide
+└── scripts/
+    ├── setup_ubuntu_vm.sh  # Automated 1-command Ubuntu 22.04/24.04 VM provisioner
+    ├── verify_persistence.py # 11-step durable persistence lifecycle verification suite
+    ├── verify_isolation.sh # Runtime dynamic sandbox isolation verification suite
+    └── cloud_teardown.sh   # Safe container stack stop & volume release helper
 ```
 
 ---
 
 ## 3. Quickstart Deployment
 
-### Step 1: Prepare Environment File
+### Option A: Automated Cloud VM Deployment (Ubuntu 22.04 / 24.04 LTS)
+For a fresh cloud instance (AWS EC2, GCP, Azure, DigitalOcean), run the automated setup script:
+```bash
+bash deploy/scripts/setup_ubuntu_vm.sh
+```
+This automatically validates hardware prerequisites, installs Docker Engine & Compose v2, configures UFW firewall rules, generates cryptographic database passwords, and brings up the stack.
+
+### Option B: Manual Container Stack Launch
 Copy the deployment template and configure production secrets:
 ```bash
 cp deploy/.env.example deploy/.env
@@ -206,3 +220,19 @@ In accordance with ORACLE's engineering standards, environmental status is trans
 - **Container Build & Composition**: Validated statically and structurally via syntax linters, schema validators, and mocked execution tests.
 - **Offline & Mocked Lifecycle**: Verified in automated Python test suite (`testing/backend/test_deployment_config.py`).
 - **Live Container Execution**: Awaiting target production host with active Docker Engine 24+ and Compose v2. Live execution is marked unverified on the Windows development workstation.
+
+### Cloud VM Verification Suites
+When deployed on a Docker-capable Linux VM, run:
+```bash
+# 1. Durable PostgreSQL Persistence Verification (11-step lifecycle)
+python3 deploy/scripts/verify_persistence.py --backend-url http://localhost:8000
+
+# 2. Runtime Dynamic Execution Isolation Verification (8 container boundary tests)
+bash deploy/scripts/verify_isolation.sh
+
+# 3. Canonical Diagnostic Scenarios Verification (6 scenarios)
+python3 testing/demonstration/test_e2e_scenarios.py --backend-url http://localhost:8000
+
+# 4. Deployment Smoke Test
+python3 testing/deploy/test_deployment_smoke.py --backend-url http://localhost:8000 --frontend-url http://localhost:3000
+```

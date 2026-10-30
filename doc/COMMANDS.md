@@ -953,11 +953,20 @@ npm run start
 
 ```powershell
 # Runs the 4 canonical demonstration cases against the live HTTP REST API:
-$env:PYTHONPATH='backend'
+$env:PYTHONPATH='backend;ml'
 .\.venv\Scripts\python.exe testing/demonstration/run_prototype_demonstration.py
 ```
 
-### 15.3 Trigger End-to-End Diagnosis via HTTP API
+### 15.3 Run Full 6-Scenario End-to-End Diagnostic Audit
+**Working Directory:** `<repository-root>`
+
+```powershell
+# Executes all 6 required diagnostic scenarios (healthy, syntax fault, telemetry, multifault, ambiguous, blocked/unsupported):
+$env:PYTHONPATH='backend;ml'
+.\.venv\Scripts\python.exe testing/demonstration/test_e2e_scenarios.py
+```
+
+### 15.4 Trigger End-to-End Diagnosis via HTTP API
 
 **Register Repository:**
 ```powershell
@@ -1002,6 +1011,69 @@ cd frontend
 npm run type-check
 npm run lint
 node --test ../testing/frontend/test_api_client.mjs
+```
+
+---
+
+## 24. Cloud VM Deployment, Durable Persistence & Runtime Isolation Commands (Implementation 022)
+
+### 24.1 Automated Cloud VM Setup (Ubuntu 22.04 / 24.04 LTS)
+**Working Directory:** `/opt/oracle` (on Linux Cloud VM)
+
+```bash
+# Clone repository onto target Cloud VM
+git clone https://github.com/your-org/ORACLE.git /opt/oracle
+cd /opt/oracle
+
+# Run the automated provisioning and deployment script
+# (Installs Docker Engine, Compose plugin, UFW firewall, generates credentials, and launches containers)
+bash deploy/scripts/setup_ubuntu_vm.sh
+```
+
+### 24.2 Durable Persistence Lifecycle Verification Suite
+**Working Directory:** `/opt/oracle` (or local workstation targeting Cloud VM)
+
+```bash
+# Execute the complete 11-step persistence lifecycle verification
+# (Tests migrations, entity creation, backend restart, db restart, full stack recreation, and data retention)
+python3 deploy/scripts/verify_persistence.py --backend-url http://localhost:8000
+
+# Standalone execution with custom docker-compose file:
+python3 deploy/scripts/verify_persistence.py \
+    --backend-url http://localhost:8000 \
+    --compose-file deploy/docker-compose.yml \
+    --env-file deploy/.env
+```
+
+### 24.3 Runtime Dynamic Execution Isolation Audit
+**Working Directory:** `/opt/oracle` (on Docker-enabled Linux Cloud VM)
+
+```bash
+# Execute the 8-point container security sandbox audit
+# (Tests --read-only root, -v :ro workspace, --network none, --cap-drop ALL, no-new-privileges, and daemon protection)
+bash deploy/scripts/verify_isolation.sh
+```
+
+### 24.4 Canonical End-to-End Diagnostic Scenarios Against Deployed Backend
+**Working Directory:** `<repository-root>` (local or Cloud VM)
+
+```bash
+# Target local or remote cloud deployment
+python testing/demonstration/test_e2e_scenarios.py --backend-url http://localhost:8000
+
+# Target remote Cloud VM by public IP or domain
+python testing/demonstration/test_e2e_scenarios.py --backend-url http://<VM_PUBLIC_IP>:8000
+```
+
+### 24.5 Cloud Stack Teardown & Resource Release
+**Working Directory:** `/opt/oracle` (on Linux Cloud VM)
+
+```bash
+# Stop containers while preserving persistent PostgreSQL data volume (oracle_pgdata)
+bash deploy/scripts/cloud_teardown.sh
+
+# Complete teardown including volume destruction (DESTRUCTIVE: erases all database records)
+bash deploy/scripts/cloud_teardown.sh --wipe-data
 ```
 
 

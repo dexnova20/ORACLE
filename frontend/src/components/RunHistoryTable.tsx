@@ -29,40 +29,40 @@ export function RunHistoryTable({ runs, loading, onRefresh }: RunHistoryTablePro
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return { text: "Completed", bg: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" };
+        return { text: "Completed", bg: "bg-[#D4FF32]/20 text-[#D4FF32] border-[#D4FF32]/50 font-bold" };
       case "partial":
-        return { text: "Partial", bg: "bg-amber-500/10 text-amber-400 border-amber-500/30" };
+        return { text: "Partial", bg: "bg-[#D4FF32]/10 text-[#D4FF32] border-[#D4FF32]/30" };
       case "failed":
-        return { text: "Failed", bg: "bg-rose-500/10 text-rose-400 border-rose-500/30" };
+        return { text: "Failed", bg: "bg-[#F20B91]/20 text-[#F20B91] border-[#F20B91]/50 font-bold" };
       default:
-        return { text: status, bg: "bg-slate-800 text-slate-400 border-slate-700" };
+        return { text: status, bg: "bg-black/50 text-[#85858D] border-white/[0.08]" };
     }
   };
 
   return (
-    <div className="rounded-xl border border-slate-800/80 bg-[#0d1424] overflow-hidden space-y-4 p-5">
+    <div className="rounded border border-white/[0.08] bg-[#151519] overflow-hidden space-y-4 p-5 font-mono text-xs">
       {/* Search & Filter Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex-1 min-w-[240px] max-w-md relative">
           <input
             type="text"
-            placeholder="Search runs by repository name, run ID, or findings..."
+            placeholder="Search runs by repository, ID, or causal summary..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-lg border border-slate-800 bg-[#080d19] px-3.5 py-2 text-xs text-slate-200 placeholder-slate-500 focus:border-cyan-500 focus:outline-none"
+            className="w-full rounded border border-white/[0.08] bg-[#09090B] px-3.5 py-2 text-xs text-[#F5F3EF] placeholder-[#85858D] focus:border-[#F20B91] focus:outline-none"
           />
         </div>
 
         <div className="flex items-center space-x-2 text-xs">
-          <div className="flex items-center rounded-lg border border-slate-800 bg-[#080d19] p-1 text-[11px]">
+          <div className="flex items-center rounded border border-white/[0.08] bg-black/40 p-0.5 text-[11px]">
             {["all", "completed", "partial", "failed"].map((st) => (
               <button
                 key={st}
                 onClick={() => setStatusFilter(st)}
-                className={`rounded px-2.5 py-1 font-medium capitalize transition-colors ${
+                className={`rounded px-2.5 py-1 capitalize transition-colors cursor-pointer ${
                   statusFilter === st
-                    ? "bg-cyan-500 text-slate-950 font-bold"
-                    : "text-slate-400 hover:text-slate-200"
+                    ? "bg-[#D4FF32] text-[#09090B] font-black"
+                    : "text-[#85858D] hover:text-[#F5F3EF]"
                 }`}
               >
                 {st}
@@ -74,7 +74,7 @@ export function RunHistoryTable({ runs, loading, onRefresh }: RunHistoryTablePro
             <button
               onClick={onRefresh}
               disabled={loading}
-              className="rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 px-3 py-2 text-xs text-slate-200 transition-colors disabled:opacity-50"
+              className="rounded border border-white/[0.08] bg-[#09090B] hover:bg-white/[0.08] px-3 py-1.5 text-xs text-[#F5F3EF] transition-colors disabled:opacity-40 cursor-pointer"
             >
               Refresh
             </button>
@@ -83,86 +83,74 @@ export function RunHistoryTable({ runs, loading, onRefresh }: RunHistoryTablePro
       </div>
 
       {/* Table / List */}
-      <div className="overflow-x-auto rounded-lg border border-slate-800/80">
-        <table className="w-full text-left text-xs text-slate-300">
-          <thead className="bg-[#080d19] border-b border-slate-800/80 text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+      <div className="overflow-x-auto rounded border border-white/[0.08]">
+        <table className="w-full text-left text-xs text-[#F5F3EF]">
+          <thead className="bg-[#09090B] border-b border-white/[0.08] text-[10px] text-[#85858D] uppercase tracking-wider">
             <tr>
-              <th className="px-4 py-3">Repository</th>
+              <th className="px-4 py-3">Repository &amp; Run ID</th>
               <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Top Fault Hypothesis</th>
-              <th className="px-4 py-3">Evidence</th>
+              <th className="px-4 py-3">Primary Fault Hypothesis</th>
+              <th className="px-4 py-3">Evidence Records</th>
               <th className="px-4 py-3">Duration</th>
               <th className="px-4 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 bg-[#0a101f]">
+          <tbody className="divide-y divide-white/[0.04] bg-[#151519]">
             {filteredRuns.length === 0 ? (
               <tr>
-                <td colSpan={6} className="text-center py-12 text-slate-500 text-xs">
-                  {loading ? "Loading diagnostic runs..." : "No diagnostic runs found."}
+                <td colSpan={6} className="px-4 py-8 text-center text-[#85858D]">
+                  {loading ? "Loading diagnostic runs..." : "No diagnostic records match the query."}
                 </td>
               </tr>
             ) : (
               filteredRuns.map((run) => {
                 const badge = getStatusBadge(run.status);
-                const topHypo = run.hypotheses.length > 0 ? run.hypotheses[0] : null;
+                const topHypothesis = run.hypotheses.length > 0 ? run.hypotheses[0] : null;
 
                 return (
-                  <tr key={run.run_id} className="hover:bg-slate-800/40 transition-colors">
-                    <td className="px-4 py-3 font-medium">
-                      <div className="font-bold text-slate-100">{run.repository_name}</div>
-                      <div className="font-mono text-[10px] text-slate-500 truncate max-w-[200px]">
-                        {run.run_id}
-                      </div>
+                  <tr key={run.run_id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="font-black text-[#F5F3EF]">{run.repository_name}</div>
+                      <div className="text-[10px] text-[#85858D] font-mono">{run.run_id}</div>
                     </td>
 
                     <td className="px-4 py-3">
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${badge.bg}`}>
+                      <span className={`text-[10px] px-2 py-0.5 rounded border uppercase tracking-wider ${badge.bg}`}>
                         {badge.text}
                       </span>
-                      {run.abstention_reason && (
-                        <span className="block mt-1 text-[10px] text-purple-400">
-                          Abstained
-                        </span>
-                      )}
                     </td>
 
                     <td className="px-4 py-3">
-                      {topHypo ? (
-                        <div>
-                          <div className="font-semibold text-cyan-300 truncate max-w-[240px]">
-                            {topHypo.category_title}
-                          </div>
-                          <div className="text-[10px] text-slate-500 font-mono">
-                            {topHypo.affected_component} ({topHypo.confidence_level})
-                          </div>
+                      {topHypothesis ? (
+                        <div className="max-w-xs truncate">
+                          <span className="text-[#F20B91] font-bold">[{topHypothesis.hypothesis_id}]</span>{" "}
+                          <span className="text-[#F5F3EF]">{topHypothesis.category_title}</span>
                         </div>
                       ) : (
-                        <span className="text-emerald-400 font-medium">Clean Baseline (No Faults)</span>
+                        <span className="text-[#D4FF32]">Clean Baseline (No Faults)</span>
                       )}
                     </td>
 
-                    <td className="px-4 py-3 font-mono text-[11px]">
-                      <span className="text-slate-200">{run.evidence.length}</span>
-                      <span className="text-slate-500"> records</span>
+                    <td className="px-4 py-3 text-[#85858D]">
+                      {run.evidence.length} records
                     </td>
 
-                    <td className="px-4 py-3 font-mono text-[11px] text-slate-400">
+                    <td className="px-4 py-3 text-[#85858D]">
                       {(run.duration_ms / 1000).toFixed(2)}s
                     </td>
 
                     <td className="px-4 py-3 text-right space-x-2">
                       <Link
                         href={`/reports/${run.run_id}`}
-                        className="rounded border border-slate-700 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 text-[11px] font-medium text-slate-200 transition-colors"
+                        className="rounded border border-white/[0.1] bg-[#09090B] hover:border-[#D4FF32] px-2.5 py-1 text-[11px] text-[#F5F3EF] transition-colors"
                       >
                         Report
                       </Link>
                       <Link
                         href="/workspace"
-                        className="rounded border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/50 px-2.5 py-1 text-[11px] font-medium text-cyan-300 transition-colors"
+                        className="rounded bg-[#F20B91] hover:bg-[#d60a80] text-[#09090B] font-black px-2.5 py-1 text-[11px] transition-colors"
                       >
-                        Workspace
+                        Workspace →
                       </Link>
                     </td>
                   </tr>

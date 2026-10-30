@@ -3547,6 +3547,240 @@ React 19 strictly flags synchronous state setter invocations inside `useEffect` 
   - `http://localhost:3000/reports/[id]`: HTTP 200 (Report deliverable view using real run UUID)
 - **FastAPI Backend Health & Persistence Detection**: Verified online (`status: "healthy"`, `persistence_mode: "in_memory_transient"`, `docker_isolation_available: false`).
 
+---
+
+## [2026-10-30] Final Full-Stack Verification & Release Acceptance (ORACLE v0.1 Prototype)
+
+### 1. Goal & Context
+With Implementation 020 completing the frontend and Implementations 001–019 establishing the backend, polyglot analyzers, ML ranking models, and deployment configurations, this milestone conducted an independent, evidence-backed audit to verify whether ORACLE v0.1 is genuinely ready for prototype demonstration.
+
+### 2. Verified Facts vs. Environmental Boundaries
+- **Runtime Services:** FastAPI backend (`127.0.0.1:8000`) and Next.js 16 frontend (`localhost:3000`) were started and verified live.
+- **Persistence Honesty:** Because the local Windows development machine does not have a live PostgreSQL daemon listening on port 5432, the system automatically engaged its `in_memory_transient` fallback mode. The UI clearly displays an amber `Transient Mem` badge, and `/api/v1/status` reports `persistence_mode: "in_memory_transient"`. Database migrations were verified offline via Alembic SQL generation (`command.upgrade(config, 'head', sql=True)`).
+- **Execution Isolation Boundary:** Docker CLI is not installed on the Windows host. Dynamic execution was verified to be strictly disabled (`docker_isolation_available: false`). The system enforces zero host execution of untrusted code; attempts to execute dynamic workloads safely halt with `ISOLATION_UNAVAILABLE`.
+
+### 3. End-to-End Diagnostic Audit (6 Required Scenarios)
+A dedicated test suite (`testing/demonstration/test_e2e_scenarios.py`) was executed against the live HTTP REST API:
+1. **Healthy Input (`real_05_healthy_control`):** Status `completed`, 0 defect hypotheses generated (0.0% false positive rate).
+2. **Known Static Fault (`real_06_source_defect_syntax`):** Status `partial`, primary hypothesis `Unhandled Runtime Exception` (`runtime_exception`) localized to exact TypeScript coordinate.
+3. **Runtime Telemetry Fault (`proj_01` + DB refusal):** Status `completed`, primary hypothesis `database_connectivity_schema`. Secret canary token (`ultra_secret_db_pass_7788`) was 100% scrubbed from report.
+4. **Multiple Interacting Faults (`real_07_multiple_defects`):** Status `completed`, 3 distinct hypotheses and 3 evidence records generated.
+5. **Ambiguous Evidence (`real_08_ambiguous_dependency`):** Status `completed`, top hypothesis `dependency_import_failure` (confidence `high`), alternative explanations preserved.
+6. **Unsupported & Blocked Input:** Rust target triggered explicit abstention (`unknown_insufficient_evidence`) with zero manufactured certainty. Unapproved workload profile was rejected with HTTP 400 Bad Request.
+
+All diagnostic runs were confirmed present in `GET /api/v1/diagnostics/runs`.
+
+### 4. Bugs Found & Remediation
+- **Windows Pytest Temporary Junction Cleanup:**
+  - *Symptom:* `pytest testing/ml/` threw `PermissionError: [WinError 5] Access is denied` at session finish while unlinking dead junction symlinks in `%TEMP%`.
+  - *Root Cause:* Known Windows junction issue with Python 3.14 / pytest default `tmp_path` factory.
+  - *Fix:* Added `--basetemp=testing/.pytest_tmp` to `testing/pytest.ini` and added `.pytest_tmp/` to `.gitignore`. All 83 ML tests pass cleanly with zero warnings or errors.
+
+### 5. Final Full-Stack Test Counts
+- **Backend & Deploy (`pytest testing/backend/ testing/deploy/`):** 173 passed, 3 skipped, 0 failed.
+- **ML Generalization & Taxonomy (`pytest testing/ml/`):** 83 passed, 0 failed.
+- **Frontend API Client (`test_api_client.mjs`):** 17 passed, 0 failed.
+- **Frontend Type Check (`tsc --noEmit`):** 0 errors.
+- **Frontend Lint (`eslint`):** 0 errors.
+- **Frontend Production Build (`next build`):** Succeeded (standalone output).
+- **Total Automated Tests:** 273 passed, 3 skipped, 0 failed (100% pass rate).
+
+**Release Decision:** **`ACCEPTED WITH LIMITATIONS`** (Documented in `testing/reports/oracle_v0.1_release_report.md`).
+
+---
+
+## [2026-10-30] Implementation 021: Containerized Deployment & Durable Persistence Verification
+
+### 1. Goal & Context
+The ORACLE v0.1 prototype was accepted with limitations in the previous audit due to the development host operating without a live PostgreSQL service or Docker engine. Implementation 021's objective was to perform a rigorous deployment verification audit, audit and repair Docker Compose configurations, verify durable persistence logic and migrations, audit execution isolation boundaries, and produce an authoritative deployment report.
+
+### 2. Host Infrastructure Preflight (Section 2)
+Before modifying system state, PowerShell diagnostics were run to assess host capabilities:
+- **Docker CLI / Compose:** Both `Get-Command docker` and `docker-compose` returned `NOT FOUND`.
+- **WSL Subsystem:** `wsl -l -v` confirmed WSL is not installed.
+- **System Memory:** Available free RAM is ~880MB out of 7.77GB total. Running Docker Desktop alongside local development servers would cause severe memory contention.
+- **Rule Adherence:** Per prompt instructions, no software was installed, no system virtualization toggles were changed, and no elevated permissions were requested. The deployment status was certified as `BLOCKED (INFRASTRUCTURE PENDING)` per Section 11 specifications.
+
+### 3. Bugs Discovered & Remediations Applied
+1. **Multi-Domain Packaging Defect in `deploy/Dockerfile.backend`**
+   - *Symptom:* Reviewing `backend/oracle` source code revealed direct imports from `ml.taxonomy.fault_taxonomy` and `ml.ranking`. However, `deploy/Dockerfile.backend` only copied `backend/oracle`, `backend/alembic`, and `backend/alembic.ini`.
+   - *Consequence:* Any container built from `deploy/Dockerfile.backend` would immediately crash at startup with `ModuleNotFoundError: No module named 'ml'`.
+   - *Fix:* Added `COPY ml /app/ml` to `deploy/Dockerfile.backend`.
+2. **HTTP 204 No Content JSON Decode Crash in `testing/deploy/test_deployment_smoke.py`**
+   - *Symptom:* Running `python testing/deploy/test_deployment_smoke.py --backend-url http://localhost:8000` threw `json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)` during Step 5e (Repository cleanup).
+   - *Root Cause:* `DELETE /api/v1/repositories/{id}` returns `HTTP 204 No Content` with an empty body (`""`). The `_request()` method called `json.loads(body)` unconditionally.
+   - *Fix:* Added body presence guard `json.loads(body) if body.strip() else {}`.
+   - *Verification:* The deployment smoke test passed all 9 stages in CLI mode and passed in-process pytest mode.
+
+### 4. Persistence & Isolation Verification
+- **Alembic Migrations:** Verified offline SQL generation producing transactional DDL for PostgreSQL (`alembic upgrade head --sql`).
+- **Simulated Restarts:** Evicted in-memory cache and verified report retrieval from database (`test_simulated_process_restart_retrieval_from_db`).
+- **Isolation Invariant:** Verified that `DockerExecutionProvider` enforces `--read-only`, `--cap-drop ALL`, `no-new-privileges`, memory/CPU caps, and that when Docker is absent, the worker returns `ISOLATION_UNAVAILABLE` with zero host code execution.
+- **Audit Reports:** Delivered formal report at `testing/reports/implementation_021_deployment_report.md`.
+
+### 5. Final Status
+- **Automated Tests:** 273 passed, 3 skipped, 0 failed across full stack.
+- **Implementation Status:** **`BLOCKED (INFRASTRUCTURE PENDING)` / `CONFIG PREPARED & VERIFIED`**.
+
+---
+
+## Implementation 022: Cloud VM Deployment, Durable Persistence & Runtime Isolation Verification
+
+### 1. Goal & Context
+The local Windows 11 workstation lacks Docker, WSL2, and native PostgreSQL, operating ORACLE v0.1 in `in_memory_transient` mode. Implementation 022 specifies deploying ORACLE v0.1 onto a dedicated Linux Cloud VM (Ubuntu 22.04 / 24.04 LTS) with Docker Engine and verifying durable PostgreSQL persistence across container and stack restarts, as well as verifying runtime dynamic execution isolation.
+In accordance with strict security and financial directives—forbidding unauthorized cloud account creation, unapproved charges, or credential entry in chat—Implementation 022 delivers a complete, automated deployment, durable persistence verification, and dynamic execution isolation package.
+
+### 2. Infrastructure Planning & Multi-Cloud Sizing
+- Evaluated compute, memory, and storage specifications across AWS EC2 (`t3.large`), GCP Compute Engine (`e2-standard-2`), Azure VM (`Standard_B2ms`), and DigitalOcean Droplets (4GB/8GB).
+- Documented memory budget: ~500MB OS/Docker, ~256MB Postgres, ~512-1024MB Backend, ~256-512MB Frontend, ~1.5-2.0GB Next.js build peak, and ~256MB ephemeral worker.
+- Documented network access control matrix: Ports 22 (SSH), 3000 (UI), and 8000 (API) permitted; PostgreSQL port 5432 strictly blocked from public inbound access.
+
+### 3. Key Tooling Authored
+1. **`deploy/scripts/setup_ubuntu_vm.sh`**:
+   - Automated 1-command provisioning script for Ubuntu 22.04/24.04 LTS.
+   - Sets up Docker Engine, Compose plugin, UFW firewall, generates cryptographic database passwords via `openssl rand -hex 24`, configures `.env`, and starts containers via `docker compose up -d --build`.
+   - Initializes a 2 GB emergency swapfile on hosts with <6 GB RAM to prevent out-of-memory errors during Next.js standalone webpack compilation.
+2. **`deploy/scripts/verify_persistence.py`**:
+   - 11-step persistence verification suite validating that database records persist across backend container restarts (`docker compose restart backend`), PostgreSQL container restarts (`docker compose restart db`), and complete stack teardown/recreation (`docker compose down` and `docker compose up -d`).
+   - Asserts idempotent Alembic migration re-execution during entrypoint startup.
+3. **`deploy/scripts/verify_isolation.sh`**:
+   - Container sandbox security audit validating `--read-only` root filesystem, `-v :ro` workspace protection, `--network none` outbound traffic rejection, `--cap-drop ALL` capability stripping, `no-new-privileges` privilege escalation prevention, memory/PID limits, and verifying `/var/run/docker.sock` is NOT mounted in `oracle-backend`.
+4. **`testing/demonstration/test_e2e_scenarios.py`**:
+   - Parameterized with `--backend-url` and `--repo-root` flags to verify all 6 canonical diagnostic scenarios against any local or remote deployment.
+   - Added `pytestmark = pytest.mark.skipif(...)` to cleanly skip live HTTP tests when executed in an offline pytest run.
+5. **`deploy/scripts/cloud_teardown.sh`**:
+   - Helper script to safely stop containers and optionally wipe persistent data volumes.
+
+### 4. Bugs Discovered & Fixes Applied
+- **Offline Pytest Failure on Live HTTP Diagnostic Scenarios:**
+  - *Symptom:* `testing/demonstration/test_e2e_scenarios.py` was being collected by generic `pytest testing/` invocations, causing `URLError: connection refused` if the HTTP backend daemon was not actively running.
+  - *Fix:* Added `_check_backend_online()` helper and `pytestmark = pytest.mark.skipif(not _check_backend_online(), reason="Live ORACLE HTTP backend server is not running")`. Pytest now skips the live daemon tests cleanly when offline, while executing all 6 scenarios when targeted directly or when the daemon is running.
+
+### 5. Final Status
+- **Automated Tests:** 273 passed, 3 skipped, 0 failed across full stack.
+- **Implementation Status:** **`ACCEPTED WITH LIMITATIONS: CLOUD PACKAGED & PREPARED (VM PROVISIONING PENDING USER INFRASTRUCTURE)`**.
+
+---
+
+## [2026-10-30] Implementation 023: Frontend Transformation: Cinematic Motion Design & Premium Interactive Experience
+
+### 1. Goal & Context
+The ORACLE v0.1 frontend was previously functional, but visually resembled a generic AI-generated dashboard relying on repetitive rounded cards, cyan glowing borders, and predictable layouts. The mission of Implementation 023 was to completely transform the visual and interactive experience into a **sophisticated, living engineering investigation environment** built around the core philosophy:
+> *"Every technical failure leaves evidence. ORACLE follows that evidence."*
+
+This transformation was executed with zero backend modifications, preserving all existing API contracts (`frontend/src/lib/api.ts`), diagnostic workflows, and data integrity.
+
+### 2. Design System & Motion Foundations
+- **Surfaces & Foundations:** Shifted from generic dark blue to deep charcoal and near-black foundation colors (`#06080d`, `#080b12`, `#0a0e17`), with subtle neutral surfaces and fine hairline borders (`border-white/[0.06]`).
+- **Disciplined Palette:**
+  - Primary accent: Electric cyan (`#00f0ff` / `#22d3ee`) for active system focus and investigation progress.
+  - Investigation activity: Violet (`#a78bfa`) for probes, AST tokens, and exploratory signals.
+  - Clean / Verified: Emerald (`#10b981`) for clean controls and validated invariants.
+  - Syntax Defects / Faults: Crimson (`#ef4444`) with subtle glitch keyframes for localized defects.
+  - Unresolved References / Warnings: Amber (`#f59e0b`) for missing packages or uncertain symbols.
+- **Pure CSS & SVG Motion Architecture:**
+  - Zero heavy external JavaScript animation libraries (avoiding React 19 compatibility hurdles and maintaining zero runtime overhead).
+  - Purposeful keyframes: `flow-edge` (SVG dependency line flow), `pulse-node`, `radar-sweep`, `fault-glitch`, and `breathe-cyan`.
+  - Full `@media (prefers-reduced-motion: reduce)` accessibility compliance.
+
+### 3. Key Components & Routes Transformed
+
+1. **Application Shell (`frontend/src/components/AppShell.tsx`):**
+   - Sleek engineering frame with hairline dividers.
+   - Real-time backend state reflection: live API gateway status, persistence mode (`PostgreSQL` vs `Transient`), and Docker host sandbox gating status.
+   - Responsive mobile navigation drawer and active target workspace indicator.
+
+2. **Signature 9-Stage Cinematic Hero (`frontend/src/components/CinematicHero.tsx`):**
+   - Full-viewport hero with oversized editorial typography ("Find the fault. Follow the evidence.") and action CTAs.
+   - 9-step animated interactive technical environment: (1) Empty canvas -> (2) Polyglot source nodes appear -> (3) Connecting lines draw -> (4) Data particles travel -> (5) Component health evaluated -> (6) Critical defect localized in `auth_service.ts` -> (7) Cascading dependency chain illuminates -> (8) Evidence badge `EVID:AST_001` appears -> (9) Settles into interactive exploration mode.
+   - Interactive stepper controls: Pause / Resume, Replay, Skip to Interactive, and scrubber dots, labeled with an explicit `"Interactive Demo"` tag.
+
+3. **5-Stage Editorial Scroll-Based Product Story (`frontend/src/components/ScrollStoryNarrative.tsx`):**
+   - Stage 1: Understand the system (polyglot AST graph assembly across Python, TypeScript, Java, Go).
+   - Stage 2: Investigate the failure (AST inspection, live interactive regex secret scrubber demonstration).
+   - Stage 3: Connect the evidence (bipartite graph linking evidence records to competing hypotheses with supporting and contradictory weights).
+   - Stage 4: Determine what to check next (Shannon entropy calculation, candidate probe matrix, information gain simulation).
+   - Stage 5: Deliver the diagnosis (audit-ready editorial deliverable preview).
+
+4. **Landing Page (`frontend/src/app/page.tsx`):**
+   - Cohesive unboxed integration of `CinematicHero` and `ScrollStoryNarrative` with minimal top navigation and engineering footer.
+
+5. **Engineering Operations Console (`frontend/src/app/dashboard/page.tsx`):**
+   - Operations console with target repository selector, live runtime telemetry state cards (FastAPI gateway, durable/transient persistence, safe container isolation), recent diagnostic runs grid with primary causal findings, and purposeful empty states.
+
+6. **Diagnostic Ingestion Dispatch Terminal (`frontend/src/components/NewDiagnosisForm.tsx` & `src/app/diagnostics/new/page.tsx`):**
+   - Target specification mode (Registered Target vs New Registration) with URI scheme guidance (`file://` and `git://`).
+   - Runtime telemetry ingestion with active automated secret redaction notice (`redact_secrets`).
+   - Container isolation security policy toggle.
+   - Multi-stage progress ticker during submission.
+
+7. **Living 3-Panel Investigation Room (`frontend/src/components/DiagnosticWorkspace.tsx` & `src/app/workspace/page.tsx`):**
+   - Left Panel: `InteractiveSystemMap` with SVG topological graph, animated flowing particles, node status halos, and canvas/matrix table toggles.
+   - Center Panel: `EvidenceToHypothesisExplorer` with ranked hypotheses, Shannon entropy gain, supporting/contradictory evidence chips, and probe verification results.
+   - Right Panel: `EvidenceInspector` with monospaced code excerpts, reliability badges, file coordinate tags, and context boundaries.
+   - Deep bidirectional synchronization: selecting a hypothesis illuminates the affected component in the System Map and pins its supporting evidence in the Evidence Inspector; selecting a component filters hypotheses.
+
+8. **Run History Audit Timeline (`frontend/src/components/RunHistoryTable.tsx` & `src/app/history/page.tsx`):**
+   - Searchable, filterable audit log with status tabs (`all`, `completed`, `partial`, `failed`), evidence count, duration, and direct report/workspace actions.
+
+9. **Editorial Deliverable Report (`frontend/src/components/DiagnosticReportView.tsx` & `src/app/reports/[id]/page.tsx`):**
+   - Executive Summary, Diagnostic Metadata strip, Ranked Fault Hypotheses, Verification Outcomes & Probes, and Diagnostic Boundaries & Remaining Uncertainties.
+
+### 4. Bugs Discovered & Fixes Applied
+1. **ESLint JSX Unescaped Entities Violation in `ScrollStoryNarrative.tsx`**
+   - *Symptom:* `npm run lint` flagged `error: ' can be escaped with &apos;, &lsquo;, &#39;, &rsquo; react/no-unescaped-entities` on line 371.
+   - *Fix:* Replaced raw single quotes inside string with HTML entities `&ldquo;Unexpected token &apos;;&apos;&rdquo;`.
+   - *Verification:* `npm run lint` passed with 0 errors and 0 warnings.
+
+### 5. Final Quality & Production Verification
+- **TypeScript Strict Compilation (`tsc --noEmit`):** 0 errors.
+- **ESLint Validation (`eslint`):** 0 errors, 0 warnings.
+- **Frontend API Client Tests (`test_api_client.mjs`):** 17 / 17 passed (100%).
+- **Next.js 16 Production Build (`next build`):** All 8 routes compiled and prerendered cleanly with standalone output.
+
+---
+
+## Implementation 024: Bold Visual Identity & Color System Transformation
+
+### 1. Architectural & Aesthetic Pivot
+- **Dominant Color Triad:**
+  - **Jet Black (`#09090B`):** Dominant technical backdrop.
+  - **Hot Pink (`#F20B91`):** Primary action buttons, critical fault indicators, selected state halos, and high-impact editorial accents.
+  - **Chartreuse (`#D4FF32`):** Secondary technical highlights, active AST dependency paths, verification achievements, and key data coordinates.
+- **Supporting Palette:**
+  - **Warm White (`#F5F3EF`):** High-readability primary typography and component titles.
+  - **Muted Gray (`#85858D`):** Technical secondary metadata, timestamps, and inactive connection paths.
+  - **Deep Charcoal (`#151519`):** Tactical surface cards, inspector panels, and container frames.
+- **Visual Design Identity:**
+  - Eliminated generic cyan/violet SaaS gradients in favor of an unmistakable contemporary creative technology brand combined with a serious engineering investigation environment.
+  - Oversized display typography with selected words in Hot Pink and Chartreuse:
+    `FIND THE <span className="text-[#F20B91]">FAULT.</span><br />FOLLOW THE <span className="text-[#D4FF32]">EVIDENCE.</span>`
+
+### 2. Route & Component Scope
+- **`CinematicHero.tsx` & `ScrollStoryNarrative.tsx` (`/`):** Centerpiece AST dependency visualization using Chartreuse active paths, Hot Pink fault highlights, and Warm White component badges; 9-stage chronology player and 5-stage interactive scroll narrative updated to triad palette.
+- **`AppShell.tsx` & `dashboard/page.tsx` (`/dashboard`):** Hot Pink primary CTA `+ NEW DIAGNOSIS`; Chartreuse live telemetry indicators for API Gateway, PostgreSQL persistence, and Docker isolation.
+- **`NewDiagnosisForm.tsx` (`/diagnostics/new`):** Technical dispatch terminal with Chartreuse tab controls and secret redaction badge.
+- **`DiagnosticWorkspace.tsx` (`/workspace`):** 3-panel split view (`InteractiveSystemMap` \| `EvidenceToHypothesisExplorer` \| `EvidenceInspector`) with full bidirectional synchronization and triad palette styling.
+- **`RunHistoryTable.tsx` (`/history`):** Filterable audit log with Chartreuse filter tabs and monospaced metadata.
+- **`DiagnosticReportView.tsx` (`/reports/[id]`):** High-craft editorial deliverable report with executive summary, causal ranking, and uncertainty boundaries.
+
+### 3. Bugs Discovered & Fixes Applied
+1. **Schema Field Mismatches in Frontend Components:**
+   - *Symptom:* `tsc --noEmit` flagged missing properties `score`, `description`, `verification_results`, `confidence` on `FaultHypothesis`, `DiagnosticReport`, and `DiagnosticEvidenceRecord`.
+   - *Root Cause:* Component rewrite had used shorthand field names rather than exact backend schema contracts (`relative_ranking_score`, `score_rationale`, `confidence_level`, `verification`).
+   - *Fix:* Re-aligned all components to the exact schema types defined in `frontend/src/types/api.ts`.
+2. **ESLint Unused Destructured Variables:**
+   - *Symptom:* `eslint` flagged `@typescript-eslint/no-unused-vars` on unused destructured props in `EvidenceToHypothesisExplorer.tsx`.
+   - *Fix:* Removed unused parameters from function signature while maintaining them in `EvidenceToHypothesisExplorerProps`.
+
+### 4. Final Quality & Production Verification
+- **TypeScript Strict Compilation (`tsc --noEmit`):** 0 errors.
+- **ESLint Validation (`eslint`):** 0 errors, 0 warnings.
+- **Frontend API Client Tests (`test_api_client.mjs`):** 17 / 17 passed (100%).
+- **Next.js 16 Production Build (`next build`):** All 8 routes compiled and prerendered cleanly with standalone output in 5.7s.
+
+
+
 
 
 

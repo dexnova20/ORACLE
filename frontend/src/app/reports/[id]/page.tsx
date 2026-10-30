@@ -44,17 +44,17 @@ function ReportDetailContent() {
   return (
     <AppShell activeTargetName={report?.repository_name}>
       {loading ? (
-        <div className="max-w-4xl mx-auto rounded-xl border border-slate-800 bg-[#0d1424] p-12 text-center text-xs text-slate-500 font-mono">
+        <div className="max-w-4xl mx-auto rounded border border-white/[0.08] bg-[#151519] p-12 text-center text-xs text-[#85858D] font-mono">
           Loading diagnostic report ({runId || "..."})...
         </div>
       ) : error ? (
-        <div className="max-w-2xl mx-auto rounded-xl border border-rose-500/40 bg-rose-950/20 p-8 text-center space-y-3">
-          <span className="text-rose-400 font-bold text-sm block">Failed to Load Report</span>
-          <p className="text-xs text-slate-300">{error}</p>
+        <div className="max-w-2xl mx-auto rounded border border-[#F20B91]/50 bg-black/60 p-8 text-center space-y-3 font-mono text-xs">
+          <span className="text-[#F20B91] font-bold text-sm block">Failed to Load Report</span>
+          <p className="text-[#F5F3EF] font-sans">{error}</p>
           <div className="pt-2">
             <Link
               href="/history"
-              className="inline-block rounded-lg bg-slate-800 hover:bg-slate-700 px-4 py-2 text-xs text-slate-200 transition-colors"
+              className="inline-block rounded border border-white/[0.1] bg-[#151519] hover:bg-white/[0.08] px-4 py-2 text-xs text-[#F5F3EF] transition-colors"
             >
               ← Back to Run History
             </Link>
@@ -71,8 +71,8 @@ export default function ReportDetailPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#070a12] text-slate-100 flex items-center justify-center p-12 text-xs font-mono text-slate-500">
-          Loading diagnostic report...
+        <div className="min-h-screen bg-[#09090B] text-[#F5F3EF] flex items-center justify-center p-12 text-xs font-mono text-[#85858D]">
+          Loading diagnostic deliverable report...
         </div>
       }
     >

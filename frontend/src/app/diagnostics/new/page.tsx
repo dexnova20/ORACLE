@@ -32,9 +32,9 @@ export default function NewDiagnosisPage() {
 
   return (
     <AppShell>
-      <div className="py-4">
+      <div className="py-2">
         {loading ? (
-          <div className="max-w-3xl mx-auto rounded-xl border border-slate-800 bg-[#0d1424] p-12 text-center text-xs text-slate-500">
+          <div className="max-w-3xl mx-auto rounded border border-white/[0.08] bg-[#151519] p-12 text-center text-xs text-[#85858D] font-mono">
             Loading repository configurations...
           </div>
         ) : (

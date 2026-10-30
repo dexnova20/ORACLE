@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-27T00:06:13.976309+00:00",
+  "timestamp": "2026-10-30T05:34:26.621214+00:00",
   "benchmark_schema_version": "1.0.0",
   "taxonomy_version": "1.0.0",
   "metrics": {
@@ -66,7 +66,7 @@
         "description": "Zero duplicate probe executions across bounded investigation iterations."
       },
       "mean_iterations": 1.47,
-      "total_duration_ms": 77497.43
+      "total_duration_ms": 52865.19
     },
     "baseline": {
       "top1_accuracy": {
@@ -112,7 +112,7 @@
         "description": "Fraction of dependency cascade scenarios where downstream component was marked 'blocked'."
       },
       "mean_iterations": 1.0,
-      "total_duration_ms": 78846.51
+      "total_duration_ms": 50130.55
     }
   },
   "baseline_results": [
@@ -127,7 +127,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 21.72
+      "duration_ms": 12.07
     },
     {
       "scenario_id": "CASE-002",
@@ -140,7 +140,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 20.81
+      "duration_ms": 12.99
     },
     {
       "scenario_id": "CASE-003",
@@ -153,7 +153,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 19.73
+      "duration_ms": 13.06
     },
     {
       "scenario_id": "CASE-004",
@@ -166,7 +166,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 21.49
+      "duration_ms": 16.21
     },
     {
       "scenario_id": "CASE-005",
@@ -179,7 +179,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 17.41
+      "duration_ms": 16.68
     },
     {
       "scenario_id": "CASE-006",
@@ -192,7 +192,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 18.81
+      "duration_ms": 12.97
     },
     {
       "scenario_id": "CASE-007",
@@ -205,7 +205,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 18.71
+      "duration_ms": 12.19
     },
     {
       "scenario_id": "CASE-008",
@@ -218,7 +218,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 17.96
+      "duration_ms": 13.44
     },
     {
       "scenario_id": "CASE-009",
@@ -231,7 +231,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 18.01
+      "duration_ms": 12.64
     },
     {
       "scenario_id": "CASE-010",
@@ -244,7 +244,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": true,
-      "duration_ms": 16.69
+      "duration_ms": 10.93
     },
     {
       "scenario_id": "CASE-011",
@@ -257,7 +257,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 20.98
+      "duration_ms": 16.3
     },
     {
       "scenario_id": "CASE-012",
@@ -270,7 +270,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 38.62
+      "duration_ms": 17.34
     },
     {
       "scenario_id": "CASE-013",
@@ -283,7 +283,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 22.09
+      "duration_ms": 14.57
     },
     {
       "scenario_id": "CASE-014",
@@ -296,7 +296,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 21.45
+      "duration_ms": 14.52
     },
     {
       "scenario_id": "CASE-015",
@@ -309,7 +309,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 16.5
+      "duration_ms": 12.46
     },
     {
       "scenario_id": "CASE-016",
@@ -322,7 +322,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 23.36
+      "duration_ms": 17.32
     },
     {
       "scenario_id": "CASE-017",
@@ -335,7 +335,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 23.94
+      "duration_ms": 14.33
     },
     {
       "scenario_id": "CASE-018",
@@ -348,7 +348,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 26.66
+      "duration_ms": 32.89
     },
     {
       "scenario_id": "CASE-019",
@@ -361,7 +361,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": true,
-      "duration_ms": 18.02
+      "duration_ms": 14.89
     },
     {
       "scenario_id": "CASE-020",
@@ -374,7 +374,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 17.48
+      "duration_ms": 16.41
     },
     {
       "scenario_id": "CASE-021",
@@ -387,7 +387,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1453.02
+      "duration_ms": 1207.89
     },
     {
       "scenario_id": "CASE-022",
@@ -400,7 +400,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1798.13
+      "duration_ms": 1112.06
     },
     {
       "scenario_id": "CASE-023",
@@ -413,7 +413,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1888.73
+      "duration_ms": 1158.32
     },
     {
       "scenario_id": "CASE-024",
@@ -426,7 +426,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1620.38
+      "duration_ms": 1171.87
     },
     {
       "scenario_id": "CASE-025",
@@ -439,7 +439,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1360.03
+      "duration_ms": 1419.24
     },
     {
       "scenario_id": "CASE-026",
@@ -452,7 +452,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1604.75
+      "duration_ms": 1104.13
     },
     {
       "scenario_id": "CASE-027",
@@ -465,7 +465,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1586.62
+      "duration_ms": 1263.32
     },
     {
       "scenario_id": "CASE-028",
@@ -478,7 +478,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1509.45
+      "duration_ms": 1131.65
     },
     {
       "scenario_id": "CASE-029",
@@ -491,7 +491,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1335.61
+      "duration_ms": 1152.18
     },
     {
       "scenario_id": "CASE-030",
@@ -504,7 +504,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2465.67
+      "duration_ms": 1557.16
     },
     {
       "scenario_id": "CASE-031",
@@ -517,7 +517,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1590.89
+      "duration_ms": 1181.98
     },
     {
       "scenario_id": "CASE-032",
@@ -530,7 +530,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1401.4
+      "duration_ms": 1233.36
     },
     {
       "scenario_id": "CASE-033",
@@ -543,7 +543,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2312.82
+      "duration_ms": 2303.49
     },
     {
       "scenario_id": "CASE-034",
@@ -556,7 +556,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 3192.59
+      "duration_ms": 2187.3
     },
     {
       "scenario_id": "CASE-035",
@@ -569,7 +569,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 3878.37
+      "duration_ms": 2229.84
     },
     {
       "scenario_id": "CASE-036",
@@ -582,7 +582,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1561.58
+      "duration_ms": 1073.17
     },
     {
       "scenario_id": "CASE-037",
@@ -595,7 +595,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2149.19
+      "duration_ms": 1067.9
     },
     {
       "scenario_id": "CASE-038",
@@ -608,7 +608,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 3698.82
+      "duration_ms": 1006.76
     },
     {
       "scenario_id": "CASE-039",
@@ -621,7 +621,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1908.86
+      "duration_ms": 960.8
     },
     {
       "scenario_id": "CASE-040",
@@ -634,7 +634,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1547.01
+      "duration_ms": 1043.33
     },
     {
       "scenario_id": "CASE-041",
@@ -647,7 +647,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2960.87
+      "duration_ms": 864.08
     },
     {
       "scenario_id": "CASE-042",
@@ -660,7 +660,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1680.27
+      "duration_ms": 934.25
     },
     {
       "scenario_id": "CASE-043",
@@ -673,7 +673,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1349.02
+      "duration_ms": 967.47
     },
     {
       "scenario_id": "CASE-044",
@@ -686,7 +686,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2340.08
+      "duration_ms": 986.04
     },
     {
       "scenario_id": "CASE-045",
@@ -699,7 +699,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1648.6
+      "duration_ms": 914.92
     },
     {
       "scenario_id": "CASE-046",
@@ -712,7 +712,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 3662.07
+      "duration_ms": 2081.82
     },
     {
       "scenario_id": "CASE-047",
@@ -725,7 +725,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2937.45
+      "duration_ms": 2136.37
     },
     {
       "scenario_id": "CASE-048",
@@ -738,7 +738,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2229.51
+      "duration_ms": 1102.74
     },
     {
       "scenario_id": "CASE-049",
@@ -751,7 +751,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1564.78
+      "duration_ms": 998.53
     },
     {
       "scenario_id": "CASE-050",
@@ -764,7 +764,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1482.94
+      "duration_ms": 1152.02
     },
     {
       "scenario_id": "CASE-051",
@@ -777,7 +777,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1275.8
+      "duration_ms": 1032.52
     },
     {
       "scenario_id": "CASE-052",
@@ -790,7 +790,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2083.85
+      "duration_ms": 1008.39
     },
     {
       "scenario_id": "CASE-053",
@@ -803,7 +803,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1430.37
+      "duration_ms": 938.99
     },
     {
       "scenario_id": "CASE-054",
@@ -816,7 +816,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1331.4
+      "duration_ms": 856.23
     },
     {
       "scenario_id": "CASE-055",
@@ -829,7 +829,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1304.55
+      "duration_ms": 969.51
     },
     {
       "scenario_id": "CASE-056",
@@ -842,7 +842,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 3000.16
+      "duration_ms": 979.02
     },
     {
       "scenario_id": "CASE-057",
@@ -855,7 +855,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1345.93
+      "duration_ms": 1139.62
     },
     {
       "scenario_id": "CASE-058",
@@ -868,7 +868,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 2957.01
+      "duration_ms": 2242.3
     },
     {
       "scenario_id": "CASE-059",
@@ -881,7 +881,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": false,
-      "duration_ms": 1962.99
+      "duration_ms": 1943.16
     },
     {
       "scenario_id": "CASE-060",
@@ -894,7 +894,7 @@
       "multiple_faults_separated": false,
       "downstream_blocked_detected": false,
       "abstained": true,
-      "duration_ms": 14.5
+      "duration_ms": 12.61
     }
   ],
   "adaptive_results": [
@@ -915,7 +915,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 19.25
+      "duration_ms": 11.13
     },
     {
       "scenario_id": "CASE-002",
@@ -939,7 +939,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 2,
-      "duration_ms": 19.01
+      "duration_ms": 12.11
     },
     {
       "scenario_id": "CASE-003",
@@ -963,7 +963,7 @@
       ],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 2,
-      "duration_ms": 16.97
+      "duration_ms": 12.65
     },
     {
       "scenario_id": "CASE-004",
@@ -986,7 +986,7 @@
       ],
       "stopping_reason": "no_useful_probe_available",
       "iterations": 2,
-      "duration_ms": 18.1
+      "duration_ms": 14.82
     },
     {
       "scenario_id": "CASE-005",
@@ -1005,7 +1005,7 @@
       "executed_probes": [],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 1,
-      "duration_ms": 15.81
+      "duration_ms": 12.21
     },
     {
       "scenario_id": "CASE-006",
@@ -1024,7 +1024,7 @@
       "executed_probes": [],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 1,
-      "duration_ms": 16.05
+      "duration_ms": 13.9
     },
     {
       "scenario_id": "CASE-007",
@@ -1043,7 +1043,7 @@
       "executed_probes": [],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 1,
-      "duration_ms": 20.65
+      "duration_ms": 12.8
     },
     {
       "scenario_id": "CASE-008",
@@ -1062,7 +1062,7 @@
       "executed_probes": [],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 1,
-      "duration_ms": 13.78
+      "duration_ms": 13.71
     },
     {
       "scenario_id": "CASE-009",
@@ -1081,7 +1081,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 14.69
+      "duration_ms": 12.54
     },
     {
       "scenario_id": "CASE-010",
@@ -1102,7 +1102,7 @@
       "executed_probes": [],
       "stopping_reason": "deliberate_abstention",
       "iterations": 1,
-      "duration_ms": 12.44
+      "duration_ms": 11.01
     },
     {
       "scenario_id": "CASE-011",
@@ -1127,7 +1127,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 31.54
+      "duration_ms": 14.89
     },
     {
       "scenario_id": "CASE-012",
@@ -1154,7 +1154,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 41.73
+      "duration_ms": 14.73
     },
     {
       "scenario_id": "CASE-013",
@@ -1181,7 +1181,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 23.94
+      "duration_ms": 14.61
     },
     {
       "scenario_id": "CASE-014",
@@ -1200,7 +1200,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 22.73
+      "duration_ms": 12.62
     },
     {
       "scenario_id": "CASE-015",
@@ -1219,7 +1219,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 19.04
+      "duration_ms": 10.22
     },
     {
       "scenario_id": "CASE-016",
@@ -1246,7 +1246,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 23.43
+      "duration_ms": 15.06
     },
     {
       "scenario_id": "CASE-017",
@@ -1269,7 +1269,7 @@
       ],
       "stopping_reason": "no_useful_probe_available",
       "iterations": 2,
-      "duration_ms": 23.94
+      "duration_ms": 51.22
     },
     {
       "scenario_id": "CASE-018",
@@ -1292,7 +1292,7 @@
       ],
       "stopping_reason": "no_useful_probe_available",
       "iterations": 2,
-      "duration_ms": 18.48
+      "duration_ms": 18.17
     },
     {
       "scenario_id": "CASE-019",
@@ -1313,7 +1313,7 @@
       "executed_probes": [],
       "stopping_reason": "deliberate_abstention",
       "iterations": 1,
-      "duration_ms": 15.05
+      "duration_ms": 33.53
     },
     {
       "scenario_id": "CASE-020",
@@ -1332,7 +1332,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 16.16
+      "duration_ms": 9.98
     },
     {
       "scenario_id": "CASE-021",
@@ -1351,7 +1351,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1484.94
+      "duration_ms": 1158.56
     },
     {
       "scenario_id": "CASE-022",
@@ -1370,7 +1370,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 2291.41
+      "duration_ms": 1431.37
     },
     {
       "scenario_id": "CASE-023",
@@ -1389,7 +1389,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1660.48
+      "duration_ms": 889.31
     },
     {
       "scenario_id": "CASE-024",
@@ -1408,7 +1408,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1598.25
+      "duration_ms": 1299.3
     },
     {
       "scenario_id": "CASE-025",
@@ -1432,7 +1432,7 @@
       ],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 2,
-      "duration_ms": 1417.6
+      "duration_ms": 1289.73
     },
     {
       "scenario_id": "CASE-026",
@@ -1451,7 +1451,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 2250.89
+      "duration_ms": 1196.63
     },
     {
       "scenario_id": "CASE-027",
@@ -1470,7 +1470,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1726.28
+      "duration_ms": 1104.32
     },
     {
       "scenario_id": "CASE-028",
@@ -1489,7 +1489,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1510.96
+      "duration_ms": 1227.29
     },
     {
       "scenario_id": "CASE-029",
@@ -1508,7 +1508,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1537.74
+      "duration_ms": 1177.96
     },
     {
       "scenario_id": "CASE-030",
@@ -1527,7 +1527,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1967.73
+      "duration_ms": 1221.88
     },
     {
       "scenario_id": "CASE-031",
@@ -1550,7 +1550,7 @@
       ],
       "stopping_reason": "no_useful_probe_available",
       "iterations": 2,
-      "duration_ms": 1505.04
+      "duration_ms": 1245.87
     },
     {
       "scenario_id": "CASE-032",
@@ -1569,7 +1569,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1383.55
+      "duration_ms": 1148.16
     },
     {
       "scenario_id": "CASE-033",
@@ -1593,7 +1593,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 2,
-      "duration_ms": 3857.19
+      "duration_ms": 2220.61
     },
     {
       "scenario_id": "CASE-034",
@@ -1620,7 +1620,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 4062.23
+      "duration_ms": 3496.76
     },
     {
       "scenario_id": "CASE-035",
@@ -1647,7 +1647,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 3195.23
+      "duration_ms": 2084.63
     },
     {
       "scenario_id": "CASE-036",
@@ -1666,7 +1666,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 2128.37
+      "duration_ms": 1024.31
     },
     {
       "scenario_id": "CASE-037",
@@ -1685,7 +1685,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1889.26
+      "duration_ms": 1173.21
     },
     {
       "scenario_id": "CASE-038",
@@ -1704,7 +1704,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 2274.55
+      "duration_ms": 1088.26
     },
     {
       "scenario_id": "CASE-039",
@@ -1723,7 +1723,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1515.9
+      "duration_ms": 894.27
     },
     {
       "scenario_id": "CASE-040",
@@ -1742,7 +1742,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1287.34
+      "duration_ms": 1003.61
     },
     {
       "scenario_id": "CASE-041",
@@ -1761,7 +1761,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1944.98
+      "duration_ms": 1092.28
     },
     {
       "scenario_id": "CASE-042",
@@ -1780,7 +1780,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1306.3
+      "duration_ms": 1100.92
     },
     {
       "scenario_id": "CASE-043",
@@ -1799,7 +1799,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1164.24
+      "duration_ms": 893.65
     },
     {
       "scenario_id": "CASE-044",
@@ -1823,7 +1823,7 @@
       ],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 2,
-      "duration_ms": 1899.3
+      "duration_ms": 960.8
     },
     {
       "scenario_id": "CASE-045",
@@ -1850,7 +1850,7 @@
       ],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 3,
-      "duration_ms": 1586.67
+      "duration_ms": 1318.82
     },
     {
       "scenario_id": "CASE-046",
@@ -1877,7 +1877,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 6210.52
+      "duration_ms": 3114.8
     },
     {
       "scenario_id": "CASE-047",
@@ -1904,7 +1904,7 @@
       ],
       "stopping_reason": "further_investigation_unsafe_or_unsupported",
       "iterations": 3,
-      "duration_ms": 2821.93
+      "duration_ms": 2225.11
     },
     {
       "scenario_id": "CASE-048",
@@ -1923,7 +1923,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1790.42
+      "duration_ms": 962.34
     },
     {
       "scenario_id": "CASE-049",
@@ -1942,7 +1942,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1448.39
+      "duration_ms": 948.08
     },
     {
       "scenario_id": "CASE-050",
@@ -1961,7 +1961,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1398.01
+      "duration_ms": 975.18
     },
     {
       "scenario_id": "CASE-051",
@@ -1980,7 +1980,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1164.64
+      "duration_ms": 999.42
     },
     {
       "scenario_id": "CASE-052",
@@ -2003,7 +2003,7 @@
       ],
       "stopping_reason": "no_useful_probe_available",
       "iterations": 2,
-      "duration_ms": 1795.89
+      "duration_ms": 975.55
     },
     {
       "scenario_id": "CASE-053",
@@ -2022,7 +2022,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1485.38
+      "duration_ms": 982.04
     },
     {
       "scenario_id": "CASE-054",
@@ -2041,7 +2041,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1224.59
+      "duration_ms": 1017.97
     },
     {
       "scenario_id": "CASE-055",
@@ -2060,7 +2060,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1151.99
+      "duration_ms": 1040.48
     },
     {
       "scenario_id": "CASE-056",
@@ -2079,7 +2079,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1579.68
+      "duration_ms": 1041.92
     },
     {
       "scenario_id": "CASE-057",
@@ -2098,7 +2098,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1282.12
+      "duration_ms": 1223.27
     },
     {
       "scenario_id": "CASE-058",
@@ -2117,7 +2117,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 3720.29
+      "duration_ms": 2218.71
     },
     {
       "scenario_id": "CASE-059",
@@ -2136,7 +2136,7 @@
       "executed_probes": [],
       "stopping_reason": "sufficient_evidence_verified",
       "iterations": 1,
-      "duration_ms": 1556.96
+      "duration_ms": 2066.11
     },
     {
       "scenario_id": "CASE-060",
@@ -2157,7 +2157,7 @@
       "executed_probes": [],
       "stopping_reason": "deliberate_abstention",
       "iterations": 1,
-      "duration_ms": 17.4
+      "duration_ms": 9.79
     }
   ]
 }

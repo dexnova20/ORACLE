@@ -12,58 +12,53 @@ export function DiagnosticReportView({ report }: DiagnosticReportViewProps) {
   const getStatusLabel = (status: string) => {
     switch (status) {
       case "verified":
-        return { label: "Verified", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40" };
+        return { label: "Verified", badge: "bg-[#D4FF32]/20 text-[#D4FF32] border-[#D4FF32]/50 font-bold" };
       case "partially_verified":
-      case "supported":
-        return { label: "Supported by Evidence", badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40" };
-      case "candidate":
-        return { label: "Hypothesis", badge: "bg-violet-500/20 text-violet-300 border-violet-500/40" };
+        return { label: "Partially Verified", badge: "bg-[#D4FF32]/10 text-[#D4FF32] border-[#D4FF32]/30 font-bold" };
       case "blocked":
-        return { label: "Blocked", badge: "bg-rose-500/20 text-rose-300 border-rose-500/40" };
-      case "untested":
-        return { label: "Untested", badge: "bg-slate-800 text-slate-400 border-slate-700" };
+        return { label: "Blocked", badge: "bg-[#F20B91]/20 text-[#F20B91] border-[#F20B91]/50 font-bold" };
       case "unsupported":
-        return { label: "Unsupported", badge: "bg-zinc-800 text-zinc-400 border-zinc-700" };
-      case "uncertain":
+        return { label: "Unsupported", badge: "bg-black/50 text-[#85858D] border-white/[0.08]" };
+      case "not_verified":
       default:
-        return { label: "Uncertain", badge: "bg-amber-500/20 text-amber-300 border-amber-500/40" };
+        return { label: "Candidate", badge: "bg-white/[0.05] text-[#F5F3EF] border-white/[0.1]" };
     }
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-12">
-      {/* Header & Meta Bar */}
-      <div className="rounded-xl border border-slate-800/80 bg-[#0d1424] p-6 space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
+    <div className="max-w-4xl mx-auto space-y-6 pb-16 font-sans">
+      {/* Editorial Report Header */}
+      <div className="rounded border border-white/[0.08] bg-[#151519] p-6 sm:p-8 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/[0.08] pb-5">
           <div className="space-y-1">
-            <div className="flex items-center space-x-2">
-              <span className="font-mono text-xs uppercase tracking-wider text-cyan-400 font-bold">
-                Diagnostic Deliverable Report
+            <div className="flex items-center space-x-2 text-xs font-mono">
+              <span className="font-black text-[#D4FF32] uppercase tracking-widest">
+                DIAGNOSTIC DELIVERABLE REPORT
               </span>
-              <span className="text-slate-600">•</span>
-              <span className="font-mono text-xs text-slate-400">{report.run_id}</span>
+              <span className="text-[#85858D]">•</span>
+              <span className="text-[#85858D]">{report.run_id}</span>
             </div>
-            <h1 className="text-2xl font-extrabold text-slate-100 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-[#F5F3EF] tracking-tight uppercase">
               {report.repository_name}
             </h1>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 font-mono text-xs">
             <span
-              className={`rounded-lg border px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider ${
+              className={`rounded border px-2.5 py-1 text-[11px] font-black uppercase tracking-wider ${
                 report.status === "completed"
-                  ? "border-emerald-500/40 bg-emerald-950/30 text-emerald-400"
+                  ? "border-[#D4FF32]/50 bg-black text-[#D4FF32]"
                   : report.status === "partial"
-                  ? "border-amber-500/40 bg-amber-950/30 text-amber-400"
-                  : "border-rose-500/40 bg-rose-950/30 text-rose-400"
-              }`}
+                  ? "border-[#D4FF32]/30 bg-black text-[#D4FF32]"
+                  : "border-[#F20B91]/50 bg-black text-[#F20B91]"
+                }`}
             >
               Status: {report.status}
             </span>
 
             <Link
               href="/workspace"
-              className="rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700 px-3 py-1 text-xs text-slate-200 transition-colors"
+              className="rounded bg-[#F20B91] hover:bg-[#d60a80] text-[#09090B] font-black px-3.5 py-1.5 transition-colors"
             >
               Open Workspace →
             </Link>
@@ -72,109 +67,130 @@ export function DiagnosticReportView({ report }: DiagnosticReportViewProps) {
 
         {/* Executive Summary */}
         <div className="space-y-2">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <h2 className="text-[10px] font-mono font-black uppercase tracking-widest text-[#85858D]">
             Executive Summary
           </h2>
-          <p className="text-sm text-slate-200 leading-relaxed bg-[#080d19] p-4 rounded-lg border border-slate-800 font-sans">
+          <p className="text-sm text-[#F5F3EF] leading-relaxed bg-[#09090B] p-4 rounded border border-white/[0.06]">
             {report.summary ||
               "The diagnostic pipeline completed polyglot static inspection and evidence aggregation across the target repository."}
           </p>
           {report.abstention_reason && (
-            <div className="rounded-lg border border-purple-900/60 bg-purple-950/20 p-3.5 text-xs text-purple-200 space-y-1">
-              <span className="font-bold block text-purple-300">
+            <div className="rounded border border-[#F20B91]/40 bg-black/60 p-3.5 text-xs text-[#F20B91] space-y-1 font-mono font-bold">
+              <span className="block text-[#F20B91]">
                 Deliberate Abstention Notice:
               </span>
-              <p>{report.abstention_reason}</p>
+              <p className="font-sans font-normal text-[#F5F3EF]">{report.abstention_reason}</p>
             </div>
           )}
         </div>
 
-        {/* Metadata Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 text-xs font-mono">
-          <div className="rounded-lg bg-[#080d19] p-2.5 border border-slate-800/60">
-            <span className="text-slate-500 block text-[10px]">Source Type:</span>
-            <span className="text-slate-200 font-semibold">{report.source_type}</span>
+        {/* Diagnostic Metadata Strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
+          <div className="rounded bg-[#09090B] p-3 border border-white/[0.06]">
+            <span className="text-[#85858D] block text-[10px] font-bold uppercase">Source Type:</span>
+            <span className="text-[#F5F3EF] font-bold">{report.source_type}</span>
           </div>
-          <div className="rounded-lg bg-[#080d19] p-2.5 border border-slate-800/60">
-            <span className="text-slate-500 block text-[10px]">Duration:</span>
-            <span className="text-slate-200 font-semibold">{(report.duration_ms / 1000).toFixed(2)}s</span>
+          <div className="rounded bg-[#09090B] p-3 border border-white/[0.06]">
+            <span className="text-[#85858D] block text-[10px] font-bold uppercase">Duration:</span>
+            <span className="text-[#F5F3EF] font-bold">{(report.duration_ms / 1000).toFixed(2)}s</span>
           </div>
-          <div className="rounded-lg bg-[#080d19] p-2.5 border border-slate-800/60">
-            <span className="text-slate-500 block text-[10px]">Stages Run:</span>
-            <span className="text-emerald-400 font-semibold">{report.completed_stages.length}</span>
+          <div className="rounded bg-[#09090B] p-3 border border-white/[0.06]">
+            <span className="text-[#85858D] block text-[10px] font-bold uppercase">Hypotheses:</span>
+            <span className="text-[#D4FF32] font-black">{report.hypotheses.length} ranked</span>
           </div>
-          <div className="rounded-lg bg-[#080d19] p-2.5 border border-slate-800/60">
-            <span className="text-slate-500 block text-[10px]">Stopping Rationale:</span>
-            <span className="text-cyan-300 font-semibold truncate block" title={report.stopping_reason || "completed"}>
-              {report.stopping_reason || "normal"}
-            </span>
+          <div className="rounded bg-[#09090B] p-3 border border-white/[0.06]">
+            <span className="text-[#85858D] block text-[10px] font-bold uppercase">Evidence Tokens:</span>
+            <span className="text-[#D4FF32] font-black">{report.evidence.length} records</span>
           </div>
         </div>
       </div>
 
-      {/* Ranked Fault Hypotheses & Provenance */}
-      <div className="rounded-xl border border-slate-800/80 bg-[#0d1424] p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200">
-            Ranked Fault Hypotheses ({report.hypotheses.length})
+      {/* Ranked Hypotheses Section */}
+      <div className="rounded border border-white/[0.08] bg-[#151519] p-6 sm:p-8 space-y-4">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+          <h2 className="text-sm font-mono font-black uppercase tracking-widest text-[#F5F3EF]">
+            Ranked Causal Hypotheses
           </h2>
-          <span className="text-xs text-slate-400 font-mono">
-            Evidence-Based Relative Ranking
+          <span className="text-xs font-mono text-[#85858D]">
+            Prioritized by ML Information Gain
           </span>
         </div>
 
         {report.hypotheses.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-emerald-500/40 bg-emerald-950/20 p-6 text-center text-xs text-emerald-300">
-            No causal fault hypotheses were triggered. Baseline repository confirmed healthy.
+          <div className="rounded border border-dashed border-[#D4FF32]/40 bg-[#09090B] p-6 text-center text-xs font-mono text-[#85858D]">
+            No causal fault hypotheses generated. Codebase verified clean.
           </div>
         ) : (
           <div className="space-y-4">
-            {report.hypotheses.map((hypo, i) => {
-              const status = getStatusLabel(hypo.verification_status);
+            {report.hypotheses.map((hypo, idx) => {
+              const statusInfo = getStatusLabel(hypo.verification_status);
+
               return (
-                <div key={hypo.hypothesis_id} className="rounded-lg border border-slate-800 bg-[#080d19] p-4 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/60 pb-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-mono text-xs font-bold text-slate-500">#{i + 1}</span>
-                      <span className="font-mono text-xs font-bold text-cyan-300">{hypo.hypothesis_id}</span>
-                      <h3 className="text-sm font-bold text-slate-100">{hypo.category_title}</h3>
+                <div
+                  key={hypo.hypothesis_id}
+                  className="rounded border border-white/[0.08] bg-[#09090B] p-4 space-y-3 font-mono"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2 text-[11px]">
+                        <span className="font-black text-[#F20B91]">
+                          #{idx + 1}
+                        </span>
+                        <span className="text-[#85858D]">•</span>
+                        <span className="text-[#85858D]">{hypo.hypothesis_id}</span>
+                        <span className="text-[#85858D]">•</span>
+                        <span className="text-[#D4FF32] font-bold">{hypo.affected_component}</span>
+                      </div>
+                      <h3 className="font-sans font-bold text-sm text-[#F5F3EF]">
+                        {hypo.category_title}
+                      </h3>
                     </div>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${status.badge}`}>
-                      {status.label}
-                    </span>
+
+                    <div className="flex items-center space-x-2 text-[10px]">
+                      <span className={`px-2 py-0.5 rounded border uppercase ${statusInfo.badge}`}>
+                        {statusInfo.label}
+                      </span>
+                      {hypo.relative_ranking_score !== undefined && hypo.relative_ranking_score !== null && (
+                        <span className="font-black text-xs text-[#D4FF32] bg-black px-2 py-0.5 rounded border border-[#D4FF32]/30">
+                          Score: {(hypo.relative_ranking_score * 100).toFixed(0)}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                    <div>
-                      <span className="text-slate-500 block text-[10px]">Affected Component:</span>
-                      <span className="font-mono text-cyan-300 font-semibold">{hypo.affected_component}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-[10px]">Confidence &amp; Score:</span>
-                      <span className="font-mono text-slate-200">
-                        {hypo.relative_ranking_score?.toFixed(0) || "N/A"}/100 ({hypo.confidence_level})
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500 block text-[10px]">Supporting Evidence:</span>
-                      <span className="font-mono text-emerald-400">
-                        {hypo.supporting_evidence_ids.join(", ") || "None"}
-                      </span>
-                    </div>
+                  <p className="font-sans text-xs text-[#F5F3EF] leading-relaxed">
+                    {hypo.score_rationale || hypo.remediation_suggestion || hypo.category_title}
+                  </p>
+
+                  {/* Supporting / Contradicting Evidence References */}
+                  <div className="flex flex-wrap items-center gap-2 pt-1 text-[10px]">
+                    {hypo.supporting_evidence_ids.length > 0 && (
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-[#D4FF32] font-black uppercase">Supporting:</span>
+                        {hypo.supporting_evidence_ids.map((id) => (
+                          <span
+                            key={id}
+                            className="rounded border border-[#D4FF32]/40 bg-[#151519] px-1.5 py-0.5 text-[#D4FF32] font-bold"
+                          >
+                            + {id}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    {hypo.contradicting_evidence_ids.length > 0 && (
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-[#F20B91] font-black uppercase">Contradictory:</span>
+                        {hypo.contradicting_evidence_ids.map((id) => (
+                          <span
+                            key={id}
+                            className="rounded border border-[#F20B91]/40 bg-[#151519] px-1.5 py-0.5 text-[#F20B91] font-bold"
+                          >
+                            - {id}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-
-                  {hypo.score_rationale && (
-                    <p className="text-xs text-slate-300 bg-[#0d1424] p-2.5 rounded border border-slate-800/80">
-                      {hypo.score_rationale}
-                    </p>
-                  )}
-
-                  {hypo.remediation_suggestion && (
-                    <div className="rounded border border-cyan-500/20 bg-cyan-950/20 p-2.5 text-xs text-cyan-200">
-                      <span className="font-bold text-cyan-400 block mb-0.5">Recommended Next Action:</span>
-                      {hypo.remediation_suggestion}
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -182,52 +198,14 @@ export function DiagnosticReportView({ report }: DiagnosticReportViewProps) {
         )}
       </div>
 
-      {/* Verification Outcomes & Diagnostic Probes */}
-      {report.verification && report.verification.length > 0 && (
-        <div className="rounded-xl border border-slate-800/80 bg-[#0d1424] p-6 space-y-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3">
-            Verification Results &amp; Probes ({report.verification.length})
-          </h2>
-          <div className="space-y-2">
-            {report.verification.map((v, i) => {
-              const status = getStatusLabel(v.status);
-              return (
-                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-slate-800 bg-[#080d19] text-xs">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center space-x-2">
-                      <span className="font-mono font-bold text-slate-300">{v.hypothesis_id}</span>
-                      <span className="text-slate-500">via {v.method}</span>
-                    </div>
-                    <p className="text-slate-400 text-[11px]">{v.details}</p>
-                  </div>
-                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border shrink-0 ${status.badge}`}>
-                    {status.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Diagnostic Limitations & Remaining Uncertainties */}
-      <div className="rounded-xl border border-slate-800/80 bg-[#0d1424] p-6 space-y-3">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-2">
-          Diagnostic Boundaries &amp; Remaining Uncertainties
-        </h2>
-        <ul className="list-disc list-inside text-xs text-slate-400 space-y-1 leading-relaxed">
-          <li>
-            Analysis was performed strictly using verified static AST inspectors and captured telemetry without executing uncontained code on the host.
-          </li>
-          {report.unsupported_stages.length > 0 && (
-            <li className="text-amber-300">
-              Unsupported stages in this environment: {report.unsupported_stages.join(", ")}
-            </li>
-          )}
-          <li>
-            Dynamic containerized execution requires an active Docker daemon. When unavailable, dynamic verification halts safely to prevent host compromise.
-          </li>
-        </ul>
+      {/* Uncertainty Notice & Diagnostic Boundaries */}
+      <div className="rounded border border-white/[0.08] bg-[#151519] p-6 space-y-2 font-mono text-xs">
+        <span className="text-[10px] font-black uppercase tracking-widest text-[#F20B91] block">
+          Diagnostic Boundaries &amp; Integrity Notice
+        </span>
+        <p className="text-[11px] text-[#85858D] font-sans leading-relaxed">
+          ORACLE results reflect observable static AST syntax trees, dependency linkages, and submitted execution telemetry. Components not covered by registered source files or skipped due to container isolation gating are excluded from causal attribution.
+        </p>
       </div>
     </div>
   );

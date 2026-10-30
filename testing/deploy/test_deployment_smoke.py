@@ -125,7 +125,8 @@ class DeploymentSmokeRunner:
         try:
             with urllib.request.urlopen(req, timeout=15) as response:
                 body = response.read().decode("utf-8")
-                return response.status, json.loads(body)
+                data = json.loads(body) if body.strip() else {}
+                return response.status, data
         except urllib.error.HTTPError as exc:
             err_body = exc.read().decode("utf-8")
             try:

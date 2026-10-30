@@ -36,8 +36,9 @@ export function DiagnosticWorkspace({ report, onRefresh }: DiagnosticWorkspacePr
 
   const handleSelectComponent = (componentId: string) => {
     setHighlightedComponentId(componentId);
-    // Find matching hypothesis for component if available
-    const matchingHypo = report.hypotheses.find((h) => h.affected_component === componentId || h.affected_component.includes(componentId));
+    const matchingHypo = report.hypotheses.find(
+      (h) => h.affected_component === componentId || h.affected_component.includes(componentId)
+    );
     if (matchingHypo) {
       setActiveHypothesis(matchingHypo);
     }
@@ -45,20 +46,19 @@ export function DiagnosticWorkspace({ report, onRefresh }: DiagnosticWorkspacePr
 
   const handleSelectEvidence = (evidenceId: string) => {
     setActiveEvidenceId(evidenceId);
-    // Switch to evidence view on mobile if needed
     setMobileTab("evidence");
   };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "completed":
-        return { text: "Completed", bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30" };
+        return { text: "Completed", bg: "bg-[#D4FF32]/20 text-[#D4FF32] border-[#D4FF32]/50 font-bold" };
       case "partial":
-        return { text: "Partial (Syntax Defect)", bg: "bg-amber-500/15 text-amber-400 border-amber-500/30" };
+        return { text: "Partial (Syntax Defect)", bg: "bg-[#D4FF32]/10 text-[#D4FF32] border-[#D4FF32]/30" };
       case "failed":
-        return { text: "Failed", bg: "bg-rose-500/15 text-rose-400 border-rose-500/30" };
+        return { text: "Failed", bg: "bg-[#F20B91]/20 text-[#F20B91] border-[#F20B91]/50 font-bold" };
       default:
-        return { text: status, bg: "bg-slate-800 text-slate-400 border-slate-700" };
+        return { text: status, bg: "bg-black/50 text-[#85858D] border-white/[0.08]" };
     }
   };
 
@@ -66,96 +66,101 @@ export function DiagnosticWorkspace({ report, onRefresh }: DiagnosticWorkspacePr
 
   return (
     <div className="flex flex-col h-[calc(100vh-6rem)] space-y-3">
-      {/* Workspace Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-800/80 bg-[#0d1424] px-5 py-3.5 shrink-0">
+      {/* Workspace Header Bar */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded border border-white/[0.08] bg-[#151519] px-4 py-3 shrink-0">
         <div className="flex items-center space-x-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/30 font-bold text-cyan-400 font-mono text-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded border border-[#F20B91]/60 bg-black/40 font-black text-[#F20B91] font-mono text-sm">
             Ω
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="text-base font-bold text-slate-100 tracking-tight">
+              <h1 className="text-sm font-black text-[#F5F3EF] tracking-tight uppercase">
                 {report.repository_name}
               </h1>
-              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${statusBadge.bg}`}>
+              <span className={`text-[9px] font-mono px-2 py-0.5 rounded border uppercase tracking-wider ${statusBadge.bg}`}>
                 {statusBadge.text}
               </span>
               {report.abstention_reason && (
-                <span className="rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 px-2 py-0.5 text-[10px] font-semibold">
+                <span className="rounded bg-[#F20B91]/20 text-[#F20B91] border border-[#F20B91]/40 px-2 py-0.5 text-[9px] font-mono font-bold">
                   Abstained
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-400 font-mono truncate max-w-xl">
-              Run: {report.run_id} • Source: {report.source_type} • Completed in {(report.duration_ms / 1000).toFixed(2)}s
+            <p className="text-[11px] text-[#85858D] font-mono truncate max-w-xl">
+              Run: {report.run_id} • Source: {report.source_type} • Duration: {(report.duration_ms / 1000).toFixed(2)}s
             </p>
           </div>
         </div>
 
-        {/* Actions & Deliverable link */}
-        <div className="flex items-center space-x-2">
+        {/* Actions & Deliverable Link */}
+        <div className="flex items-center space-x-2 font-mono text-xs">
           {onRefresh && (
             <button
               onClick={onRefresh}
-              className="rounded-lg border border-slate-700 bg-slate-800/80 px-3 py-1.5 text-xs text-slate-200 hover:bg-slate-700 transition-colors"
+              className="rounded border border-white/[0.08] bg-black/40 hover:bg-white/[0.08] px-3 py-1.5 text-[#F5F3EF] transition-colors"
             >
-              Refresh
+              Refresh Data
             </button>
           )}
 
           <Link
             href={`/reports/${report.run_id}`}
-            className="flex items-center space-x-1.5 rounded-lg border border-cyan-500/40 bg-cyan-950/40 hover:bg-cyan-900/50 text-cyan-300 px-3 py-1.5 text-xs font-semibold transition-colors"
+            className="flex items-center space-x-1.5 rounded bg-[#F20B91] hover:bg-[#d60a80] text-[#09090B] font-black px-3.5 py-1.5 text-xs transition-all shadow-[0_0_12px_rgba(242,11,145,0.3)]"
           >
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <span>View Full Report</span>
+            <span>DELIVERABLE REPORT</span>
+            <span>→</span>
           </Link>
         </div>
       </div>
 
-      {/* Mobile Tab Selector */}
-      <div className="lg:hidden flex items-center rounded-lg border border-slate-800 bg-[#0d1424] p-1 text-xs shrink-0">
+      {/* Mobile Tab Switcher */}
+      <div className="flex md:hidden rounded border border-white/[0.08] bg-[#151519] p-1 font-mono text-xs shrink-0">
         <button
           onClick={() => setMobileTab("map")}
-          className={`flex-1 py-1.5 rounded font-medium transition-colors ${
-            mobileTab === "map" ? "bg-cyan-500 text-slate-950 font-bold" : "text-slate-400"
+          className={`flex-1 py-1.5 rounded text-center transition-colors ${
+            mobileTab === "map"
+              ? "bg-[#D4FF32] text-[#09090B] font-black"
+              : "text-[#85858D]"
           }`}
         >
           System Map
         </button>
         <button
           onClick={() => setMobileTab("investigation")}
-          className={`flex-1 py-1.5 rounded font-medium transition-colors ${
-            mobileTab === "investigation" ? "bg-cyan-500 text-slate-950 font-bold" : "text-slate-400"
+          className={`flex-1 py-1.5 rounded text-center transition-colors ${
+            mobileTab === "investigation"
+              ? "bg-[#D4FF32] text-[#09090B] font-black"
+              : "text-[#85858D]"
           }`}
         >
-          Investigation &amp; Hypotheses
+          Hypotheses ({report.hypotheses.length})
         </button>
         <button
           onClick={() => setMobileTab("evidence")}
-          className={`flex-1 py-1.5 rounded font-medium transition-colors ${
-            mobileTab === "evidence" ? "bg-cyan-500 text-slate-950 font-bold" : "text-slate-400"
+          className={`flex-1 py-1.5 rounded text-center transition-colors ${
+            mobileTab === "evidence"
+              ? "bg-[#D4FF32] text-[#09090B] font-black"
+              : "text-[#85858D]"
           }`}
         >
-          Evidence Inspector
+          Evidence ({report.evidence.length})
         </button>
       </div>
 
-      {/* Three-Panel Investigation Layout */}
-      <div className="flex-1 min-h-0 grid grid-cols-1 lg:grid-cols-12 gap-3">
-        {/* Left Panel: System Map (4 cols on desktop) */}
-        <div className={`h-full lg:col-span-4 ${mobileTab === "map" ? "block" : "hidden lg:block"}`}>
+      {/* Living 3-Panel Split View (Desktop) */}
+      <div className="hidden md:grid md:grid-cols-12 gap-3 flex-1 min-h-0">
+        {/* Panel 1: Interactive System Map (4 cols) */}
+        <div className="col-span-4 h-full min-h-0">
           <InteractiveSystemMap
             systemMap={report.system_map}
             highlightedComponentId={highlightedComponentId}
             onSelectComponent={handleSelectComponent}
+            isDemo={!report.system_map}
           />
         </div>
 
-        {/* Center Panel: Investigation & Hypotheses (5 cols on desktop) */}
-        <div className={`h-full lg:col-span-5 ${mobileTab === "investigation" ? "block" : "hidden lg:block"}`}>
+        {/* Panel 2: Hypothesis Explorer (4 cols) */}
+        <div className="col-span-4 h-full min-h-0">
           <EvidenceToHypothesisExplorer
             hypotheses={report.hypotheses}
             verificationList={report.verification}
@@ -169,16 +174,50 @@ export function DiagnosticWorkspace({ report, onRefresh }: DiagnosticWorkspacePr
           />
         </div>
 
-        {/* Right Panel: Evidence Inspector (3 cols on desktop) */}
-        <div className={`h-full lg:col-span-3 ${mobileTab === "evidence" ? "block" : "hidden lg:block"}`}>
+        {/* Panel 3: Evidence Inspector (4 cols) */}
+        <div className="col-span-4 h-full min-h-0">
           <EvidenceInspector
             evidenceList={report.evidence}
             activeEvidenceId={activeEvidenceId}
-            supportingEvidenceIds={activeHypothesis?.supporting_evidence_ids}
-            contradictingEvidenceIds={activeHypothesis?.contradicting_evidence_ids}
-            onSelectEvidence={setActiveEvidenceId}
+            supportingEvidenceIds={activeHypothesis?.supporting_evidence_ids || []}
+            contradictingEvidenceIds={activeHypothesis?.contradicting_evidence_ids || []}
+            onSelectEvidence={handleSelectEvidence}
           />
         </div>
+      </div>
+
+      {/* Mobile Single Panel View */}
+      <div className="flex-1 md:hidden min-h-0">
+        {mobileTab === "map" && (
+          <InteractiveSystemMap
+            systemMap={report.system_map}
+            highlightedComponentId={highlightedComponentId}
+            onSelectComponent={handleSelectComponent}
+            isDemo={!report.system_map}
+          />
+        )}
+        {mobileTab === "investigation" && (
+          <EvidenceToHypothesisExplorer
+            hypotheses={report.hypotheses}
+            verificationList={report.verification}
+            candidateProbes={report.candidate_probes}
+            executedProbes={report.executed_probes}
+            investigationHistory={report.investigation_history}
+            stoppingReason={report.stopping_reason}
+            onSelectHypothesis={handleSelectHypothesis}
+            onSelectEvidence={handleSelectEvidence}
+            onSelectComponent={handleSelectComponent}
+          />
+        )}
+        {mobileTab === "evidence" && (
+          <EvidenceInspector
+            evidenceList={report.evidence}
+            activeEvidenceId={activeEvidenceId}
+            supportingEvidenceIds={activeHypothesis?.supporting_evidence_ids || []}
+            contradictingEvidenceIds={activeHypothesis?.contradicting_evidence_ids || []}
+            onSelectEvidence={handleSelectEvidence}
+          />
+        )}
       </div>
     </div>
   );

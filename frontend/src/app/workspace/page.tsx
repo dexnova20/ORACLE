@@ -92,15 +92,15 @@ export default function WorkspacePage() {
   return (
     <AppShell activeTargetName={report?.repository_name || activeRepo?.name}>
       {repositories.length > 1 && (
-        <div className="flex items-center space-x-2 px-4 py-2 border-b border-slate-800 bg-[#0a0f1d] text-xs shrink-0">
-          <span className="text-slate-400 font-mono text-[11px]">Target Workspace:</span>
+        <div className="flex items-center space-x-2 px-4 py-2 border-b border-white/[0.08] bg-[#151519] text-xs font-mono shrink-0 mb-3 rounded">
+          <span className="text-[#85858D] text-[11px] font-bold">Active Investigation Target:</span>
           <select
             value={selectedRepoId || (repositories.length > 0 ? repositories[0].id : "")}
             onChange={(e) => {
               setSelectedRepoId(e.target.value);
               fetchWorkspace(e.target.value);
             }}
-            className="rounded bg-slate-900 border border-slate-700 px-2 py-1 text-slate-200 text-xs font-mono focus:outline-none focus:border-cyan-500"
+            className="rounded bg-[#09090B] border border-white/[0.1] px-2.5 py-1 text-[#F5F3EF] text-xs font-mono focus:outline-none focus:border-[#F20B91]"
           >
             {repositories.map((r) => (
               <option key={r.id} value={r.id}>
@@ -111,16 +111,16 @@ export default function WorkspacePage() {
         </div>
       )}
       {loading ? (
-        <div className="h-full flex items-center justify-center p-12 text-xs text-slate-500 font-mono">
+        <div className="h-full flex items-center justify-center p-12 text-xs text-[#85858D] font-mono">
           Loading diagnostic investigation workspace...
         </div>
       ) : error ? (
-        <div className="max-w-2xl mx-auto my-12 rounded-xl border border-rose-500/40 bg-rose-950/20 p-8 text-center space-y-3">
-          <span className="text-rose-400 font-bold text-sm block">Error Loading Workspace</span>
-          <p className="text-xs text-slate-300">{error}</p>
+        <div className="max-w-2xl mx-auto my-12 rounded border border-[#F20B91]/50 bg-black/60 p-8 text-center space-y-3 font-mono text-xs">
+          <span className="text-[#F20B91] font-bold text-sm block">Error Loading Workspace</span>
+          <p className="text-[#F5F3EF] font-sans">{error}</p>
           <button
             onClick={handleRefresh}
-            className="rounded-lg bg-slate-800 hover:bg-slate-700 px-4 py-2 text-xs text-slate-200 transition-colors"
+            className="rounded border border-white/[0.1] bg-[#151519] hover:bg-white/[0.08] px-4 py-2 text-xs text-[#F5F3EF] transition-colors cursor-pointer"
           >
             Retry Connection
           </button>
@@ -129,22 +129,22 @@ export default function WorkspacePage() {
         <DiagnosticWorkspace report={report} onRefresh={handleRefresh} />
       ) : (
         /* Empty State */
-        <div className="max-w-2xl mx-auto my-12 rounded-xl border border-dashed border-slate-800 bg-[#0d1424] p-12 text-center space-y-4">
-          <div className="h-12 w-12 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 mx-auto flex items-center justify-center font-bold text-lg font-mono">
+        <div className="max-w-2xl mx-auto my-12 rounded border border-dashed border-white/[0.1] bg-[#151519] p-12 text-center space-y-4 font-mono text-xs">
+          <div className="h-10 w-10 rounded border border-[#F20B91]/60 bg-black/60 text-[#F20B91] mx-auto flex items-center justify-center font-black text-base">
             Ω
           </div>
-          <h2 className="text-base font-bold text-slate-100">
-            No Diagnostic Report Active
+          <h2 className="text-base font-black text-[#F5F3EF] uppercase">
+            No Active Diagnostic Report
           </h2>
-          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-            The live investigation workspace displays system component graphs, evidence inspectors, and causal hypotheses once an investigation has run.
+          <p className="text-[#85858D] max-w-md mx-auto leading-relaxed font-sans text-xs">
+            The live investigation room presents interactive dependency graphs, evidence inspectors, and causal hypotheses once an investigation has run.
           </p>
           <div className="pt-2">
             <Link
               href="/diagnostics/new"
-              className="inline-flex items-center space-x-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold px-4 py-2.5 text-xs transition-colors shadow-sm"
+              className="inline-flex items-center space-x-2 rounded bg-[#F20B91] hover:bg-[#d60a80] text-[#09090B] font-black px-5 py-2.5 text-xs tracking-wider transition-colors shadow-sm"
             >
-              <span>Launch New Investigation</span>
+              <span>LAUNCH NEW INVESTIGATION</span>
               <span>→</span>
             </Link>
           </div>

@@ -2,45 +2,63 @@
 
 @layer base {
   :root {
-    --bg-base: #070a12;
-    --bg-surface: #0d1322;
-    --bg-surface-elevated: #131c31;
-    --border-subtle: rgba(255, 255, 255, 0.08);
-    --border-accent: rgba(34, 211, 238, 0.25);
-    --accent-cyan: #22d3ee;
-    --accent-violet: #a78bfa;
+    /* Bold Visual Identity Color System */
+    --bg-base: #09090b;             /* Jet Black */
+    --bg-surface: #151519;          /* Deep Charcoal */
+    --bg-surface-elevated: #1c1c22; /* Elevated Surface */
+    --bg-surface-highlight: #25252e;
+    
+    --color-jet: #09090b;
+    --color-hot-pink: #f20b91;
+    --color-chartreuse: #d4ff32;
+    --color-warm-white: #f5f3ef;
+    --color-muted-gray: #85858d;
+    --color-charcoal: #151519;
+
+    --border-subtle: rgba(255, 255, 255, 0.07);
+    --border-medium: rgba(255, 255, 255, 0.14);
+    --border-pink: rgba(242, 11, 145, 0.4);
+    --border-chartreuse: rgba(212, 255, 50, 0.4);
   }
 
   body {
-    background-color: #070a12;
-    color: #e2e8f0;
+    background-color: #09090b;
+    color: #f5f3ef;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background-color: #f20b91;
+    color: #09090b;
   }
 }
 
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: #09090b;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.2);
+  background: #25252e;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.4);
+  background: #85858d;
 }
 
-/* Purposeful Motion: Flowing dependency lines */
+/* Purposeful Motion Design & Animation Keyframes */
+
+/* 1. Dependency Flow Edge */
 @keyframes flow-edge {
   from {
-    stroke-dashoffset: 24;
+    stroke-dashoffset: 28;
   }
   to {
     stroke-dashoffset: 0;
@@ -51,17 +69,121 @@
   animation: flow-edge 1.8s linear infinite;
 }
 
+/* 2. Subsystem Node Pulse */
 @keyframes pulse-node {
   0%, 100% {
     transform: scale(1);
     opacity: 1;
   }
   50% {
-    transform: scale(1.08);
-    opacity: 0.85;
+    transform: scale(1.05);
+    opacity: 0.88;
   }
 }
 
 .animate-pulse-node {
-  animation: pulse-node 2.4s ease-in-out infinite;
+  animation: pulse-node 2.8s ease-in-out infinite;
+}
+
+/* 3. Investigation Radar Sweep */
+@keyframes radar-sweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-sweep {
+  animation: radar-sweep 8s linear infinite;
+}
+
+/* 4. Fault Glitch Flash (Hot Pink) */
+@keyframes fault-glitch {
+  0%, 92%, 100% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  93% {
+    opacity: 0.8;
+    transform: translate(-1.5px, 0.5px);
+  }
+  95% {
+    opacity: 0.9;
+    transform: translate(1.5px, -0.5px);
+  }
+  97% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+.animate-fault-glitch {
+  animation: fault-glitch 4s ease-in-out infinite;
+}
+
+/* 5. Breathing Border Accent (Hot Pink) */
+@keyframes breathe-pink {
+  0%, 100% {
+    border-color: rgba(242, 11, 145, 0.3);
+    box-shadow: 0 0 12px rgba(242, 11, 145, 0.1);
+  }
+  50% {
+    border-color: rgba(242, 11, 145, 0.6);
+    box-shadow: 0 0 22px rgba(242, 11, 145, 0.25);
+  }
+}
+
+.animate-breathe-pink {
+  animation: breathe-pink 3s ease-in-out infinite;
+}
+
+/* 6. Breathing Border Accent (Chartreuse) */
+@keyframes breathe-chartreuse {
+  0%, 100% {
+    border-color: rgba(212, 255, 50, 0.3);
+    box-shadow: 0 0 12px rgba(212, 255, 50, 0.1);
+  }
+  50% {
+    border-color: rgba(212, 255, 50, 0.6);
+    box-shadow: 0 0 22px rgba(212, 255, 50, 0.25);
+  }
+}
+
+.animate-breathe-chartreuse {
+  animation: breathe-chartreuse 3s ease-in-out infinite;
+}
+
+/* 7. Coordinate Grid Background Patterns */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.bg-grid-pattern-dense {
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* 8. Vignette overlay for cinematic depth */
+.cinematic-vignette {
+  background: radial-gradient(circle at 50% 40%, transparent 40%, rgba(9, 9, 11, 0.9) 90%);
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-flow-edge,
+  .animate-pulse-node,
+  .animate-radar-sweep,
+  .animate-fault-glitch,
+  .animate-breathe-pink,
+  .animate-breathe-chartreuse {
+    animation: none !important;
+    transition: none !important;
+  }
 }

@@ -50,24 +50,27 @@ export default function HistoryPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between border-b border-slate-800/80 pb-4">
+      <div className="space-y-5 max-w-7xl mx-auto">
+        <div className="flex items-center justify-between border-b border-white/[0.08] pb-4">
           <div className="space-y-1">
-            <h1 className="text-xl font-bold tracking-tight text-slate-100">
-              Diagnostic Run History
-            </h1>
-            <p className="text-xs text-slate-400">
-              Audit log of previous investigations, findings, stopping rationales, and evidence records.
+            <div className="flex items-center space-x-2">
+              <span className="h-2 w-2 rounded-full bg-[#D4FF32]" />
+              <h1 className="text-xl font-black tracking-tight text-[#F5F3EF] font-mono uppercase">
+                Diagnostic Run History
+              </h1>
+            </div>
+            <p className="text-xs text-[#85858D] font-sans">
+              Chronological audit log of previous investigations, findings, stopping rationales, and evidence records.
             </p>
           </div>
         </div>
 
         {error && (
-          <div className="rounded-xl border border-rose-500/40 bg-rose-950/20 p-4 text-xs text-rose-300 flex items-center justify-between">
+          <div className="rounded border border-[#F20B91]/50 bg-black/60 p-4 text-xs text-[#F20B91] flex items-center justify-between font-mono font-bold">
             <span>{error}</span>
             <button
               onClick={loadRuns}
-              className="rounded bg-rose-900/60 px-2.5 py-1 text-xs font-semibold text-rose-200 hover:bg-rose-800"
+              className="rounded bg-[#F20B91] px-3 py-1 text-xs font-black text-[#09090B] hover:bg-[#d60a80] cursor-pointer"
             >
               Retry
             </button>
